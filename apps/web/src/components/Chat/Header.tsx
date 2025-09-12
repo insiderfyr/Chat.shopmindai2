@@ -9,6 +9,7 @@ import ExportAndShareMenu from './ExportAndShareMenu';
 import { useMediaQuery, useHasAccess } from '~/hooks';
 
 import { TemporaryChat } from './TemporaryChat';
+import StoresDropdown from '../StoresDropdown';
 
 const defaultInterface = getConfigDefaults().interface;
 
@@ -44,6 +45,7 @@ export default function Header() {
             } ${!navVisible ? 'translate-x-0' : 'translate-x-[-100px]'}`}
           >
             {/* <ModelSelector startupConfig={startupConfig} /> */}
+            <StoresDropdown className="max-w-[200px]" />
 
             {isSmallScreen && (
               <>
