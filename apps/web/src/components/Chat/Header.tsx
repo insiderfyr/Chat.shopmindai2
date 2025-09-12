@@ -9,6 +9,7 @@ import ExportAndShareMenu from './ExportAndShareMenu';
 import { useMediaQuery, useHasAccess } from '~/hooks';
 
 import { TemporaryChat } from './TemporaryChat';
+import StoresDropdown from '~/components/StoresDropdown';
 
 const defaultInterface = getConfigDefaults().interface;
 
