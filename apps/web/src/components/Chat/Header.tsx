@@ -45,6 +45,7 @@ export default function Header() {
             } ${!navVisible ? 'translate-x-0' : 'translate-x-[-100px]'}`}
           >
             {/* <ModelSelector startupConfig={startupConfig} /> */}
+            <StoresDropdown className="max-w-[200px] rounded-md" />
 
             {isSmallScreen && (
               <>
