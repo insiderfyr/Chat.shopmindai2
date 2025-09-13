@@ -86,7 +86,7 @@ export const getAuthStartupConfig = async () => {
           registration: true,
           passwordReset: true,
           emailVerification: false,
-          socialLogin: false,
+          socialLogin: true,
         },
         validation: {
           username: {
@@ -121,7 +121,12 @@ export const getAuthStartupConfig = async () => {
       registration: true,
       passwordReset: true,
       emailVerification: false,
-      socialLogin: false,
+      socialLogin: true,
+      socialLoginEnabled: true,
+      emailLoginEnabled: true,
+      googleLoginEnabled: true,
+      serverDomain: 'http://localhost:8080',
+      socialLogins: ['google'],
       
       endpoints: {
         login: '/api/v1/auth/login',

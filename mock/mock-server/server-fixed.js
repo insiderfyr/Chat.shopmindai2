@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3080;
+const port = 3080;
 
 // Middleware
 app.use(express.json());
@@ -152,20 +152,55 @@ app.get('/api/user', (req, res) => {
 
 app.get('/api/endpoints', (req, res) => {
   res.json({
-    data: {
-      agents: null,
-      anthropic: null,
-      assistants: null,
-      azureAssistants: null,
-      azureOpenAI: null,
-      chatGPTBrowser: null,
-      custom: null,
-      google: null,
-      gptPlugins: null,
-      openAI: null,
-      xAI: null
+    openAI: {
+      availableModels: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
+      userProvide: false,
+      apiKey: 'mock-api-key',
+      baseURL: 'https://api.openai.com/v1',
+      models: {
+        default: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
+        fetch: false
+      },
+      titleConvo: true,
+      titleModel: 'gpt-3.5-turbo',
+      summarize: false,
+      summaryModel: 'gpt-3.5-turbo',
+      forcePrompt: false,
+      modelDisplayLabel: 'OpenAI',
+      order: 1
     },
-    message: "AI Endpoints - placeholder for ShopMindAI"
+    anthropic: {
+      availableModels: ['claude-3-haiku', 'claude-3-sonnet', 'claude-3-opus'],
+      userProvide: false,
+      apiKey: 'mock-anthropic-key',
+      baseURL: 'https://api.anthropic.com',
+      models: {
+        default: ['claude-3-haiku', 'claude-3-sonnet', 'claude-3-opus'],
+        fetch: false
+      },
+      titleConvo: true,
+      titleModel: 'claude-3-haiku',
+      modelDisplayLabel: 'Anthropic',
+      order: 2
+    },
+    google: {
+      availableModels: ['gemini-pro', 'gemini-pro-vision'],
+      userProvide: false,
+      apiKey: 'mock-google-key',
+      models: {
+        default: ['gemini-pro', 'gemini-pro-vision'],
+        fetch: false
+      },
+      modelDisplayLabel: 'Google',
+      order: 3
+    },
+    agents: {
+      disableBuilder: false,
+      pollIntervalMs: 750,
+      timeoutMs: 180000,
+      modelDisplayLabel: 'Agents',
+      order: 4
+    }
   });
 });
 
@@ -194,6 +229,98 @@ app.get('/metrics', (req, res) => {
     },
     message: "Metrics endpoint - placeholder for ShopMindAI"
   });
+});
+
+// Files endpoints
+app.get('/api/files', (req, res) => {
+  res.json([]);
+});
+
+app.get('/api/files/config', (req, res) => {
+  res.json({
+    endpoints: {
+      openAI: {
+        disabled: false,
+        fileLimit: 10,
+        fileSizeLimit: 100000000,
+        totalSizeLimit: 1000000000,
+        supportedMimeTypes: [
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+          'text/plain',
+          'application/pdf',
+          'text/csv',
+          'application/json'
+        ]
+      },
+      anthropic: {
+        disabled: false,
+        fileLimit: 5,
+        fileSizeLimit: 50000000,
+        totalSizeLimit: 500000000,
+        supportedMimeTypes: [
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+          'text/plain'
+        ]
+      },
+      google: {
+        disabled: false,
+        fileLimit: 8,
+        fileSizeLimit: 75000000,
+        totalSizeLimit: 750000000,
+        supportedMimeTypes: [
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+          'text/plain',
+          'application/pdf'
+        ]
+      }
+    },
+    serverFileSizeLimit: 100000000,
+    avatarSizeLimit: 2000000
+  });
+});
+
+// Models endpoint
+app.get('/api/models', (req, res) => {
+  res.json({
+    openAI: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo'],
+    anthropic: ['claude-3-haiku', 'claude-3-sonnet', 'claude-3-opus'],
+    google: ['gemini-pro', 'gemini-pro-vision']
+  });
+});
+
+// Conversations endpoints
+app.get('/api/convos', (req, res) => {
+  res.json({
+    conversations: [],
+    nextCursor: null
+  });
+});
+
+app.get('/api/convos/:id', (req, res) => {
+  const { id } = req.params;
+  res.json({
+    conversationId: id,
+    title: 'Mock Conversation',
+    endpoint: 'openAI',
+    model: 'gpt-3.5-turbo',
+    messages: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  });
+});
+
+// Messages endpoints
+app.get('/api/messages/:conversationId', (req, res) => {
+  res.json([]);
 });
 
 // Generic API routes
@@ -285,33 +412,3 @@ app.get('/api/v1/auth/config', (req, res) => {
     message: 'Auth configuration for ShopMindAI'
   });
 });
-
-// Auth service config for frontend
-app.get('/api/auth/config', (req, res) => {
-  res.json({
-    data: {
-      keycloak: {
-        url: 'http://localhost:8081/auth',
-        realm: 'ShopMindAI',
-        clientId: 'auth-service',
-        authUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/auth',
-        tokenUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/token',
-        logoutUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/logout'
-      },
-      endpoints: {
-        login: '/api/v1/auth/login',
-        register: '/api/v1/auth/register',
-        refresh: '/api/v1/auth/refresh',
-        logout: '/api/v1/auth/logout',
-        profile: '/api/v1/user/profile'
-      },
-      features: {
-        registration: true,
-        passwordReset: true,
-        emailVerification: false,
-        socialLogin: false
-      },
-      validation: {
-        username: { minLength: 3, maxLength: 30, pattern: '^[a-zA-Z0-9_]+$' },
-        password: { minLength: 8, maxLength: 128, requirements: ['At least one uppercase letter','At least one lowercase letter','At least one number','At least one special character'] },
-        email: { required: true, pattern: '^[a-zA-Z0-9._
