@@ -152,11 +152,9 @@ export const useRegisterUserMutation = (
       console.log("📝 Registration API Request - Sending to:", 'http://localhost:8080/api/v1/auth/register');
       
       const requestData = {
-        username: payload.username,
+        username: payload.email,
         email: payload.email,
         password: payload.password,
-        first_name: payload.first_name,
-        last_name: payload.last_name,
       };
       
       console.log("📝 Registration API Request - Request data:", requestData);

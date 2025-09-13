@@ -1,9 +1,9 @@
 package models
 
 import (
+	"strings"
 	"time"
 	"unicode"
-	"strings"
 )
 
 // User represents a user in the system
@@ -26,11 +26,11 @@ type LoginRequest struct {
 
 // RegisterRequest represents a registration request - IMPROVED VALIDATION
 type RegisterRequest struct {
-	Username  string `json:"username" binding:"required,min=3,max=30"`
+	Username  string `json:"username" binding:"omitempty,min=3,max=30"`
 	Email     string `json:"email" binding:"required,email"`
 	Password  string `json:"password" binding:"required,min=8,max=128"`
-	FirstName string `json:"first_name" binding:"required,min=2,max=50"`
-	LastName  string `json:"last_name" binding:"required,min=2,max=50"`
+	FirstName string `json:"first_name" binding:"omitempty,min=2,max=50"`
+	LastName  string `json:"last_name" binding:"omitempty,min=2,max=50"`
 }
 
 // Validate performs additional validation for RegisterRequest
@@ -38,7 +38,7 @@ func (r *RegisterRequest) Validate() []string {
 	var errors []string
 
 	// Username validation
-	if !isValidUsername(r.Username) {
+	if r.Username != "" && !isValidUsername(r.Username) {
 		errors = append(errors, "username must contain only letters, numbers, and underscores")
 	}
 
@@ -48,10 +48,10 @@ func (r *RegisterRequest) Validate() []string {
 	}
 
 	// Name validation (no numbers or special chars)
-	if !isValidName(r.FirstName) {
+	if r.FirstName != "" && !isValidName(r.FirstName) {
 		errors = append(errors, "first name must contain only letters and spaces")
 	}
-	if !isValidName(r.LastName) {
+	if r.LastName != "" && !isValidName(r.LastName) {
 		errors = append(errors, "last name must contain only letters and spaces")
 	}
 
@@ -81,15 +81,15 @@ type ChangePasswordRequest struct {
 // Validate performs additional validation for ChangePasswordRequest
 func (c *ChangePasswordRequest) Validate() []string {
 	var errors []string
-	
+
 	if c.CurrentPassword == c.NewPassword {
 		errors = append(errors, "new password must be different from current password")
 	}
-	
+
 	if !isValidPassword(c.NewPassword) {
 		errors = append(errors, "password must contain at least one uppercase letter, one lowercase letter, one number, and one special character")
 	}
-	
+
 	return errors
 }
 
@@ -103,14 +103,14 @@ type UpdateProfileRequest struct {
 // Validate performs additional validation for UpdateProfileRequest
 func (u *UpdateProfileRequest) Validate() []string {
 	var errors []string
-	
+
 	if u.FirstName != "" && !isValidName(u.FirstName) {
 		errors = append(errors, "first name must contain only letters and spaces")
 	}
 	if u.LastName != "" && !isValidName(u.LastName) {
 		errors = append(errors, "last name must contain only letters and spaces")
 	}
-	
+
 	return errors
 }
 

@@ -11,10 +11,7 @@ import { ErrorMessage } from './ErrorMessage';
 
 // Local type definition for registration with separate first_name and last_name
 type TRegisterUserLocal = {
-  first_name: string;
-  last_name: string;
   email: string;
-  username: string;
   password: string;
   confirm_password?: string;
   token?: string;
@@ -111,7 +108,7 @@ const Registration: React.FC = () => {
           autoComplete={id}
           aria-label={localize(label)}
           {...register(
-            id as 'first_name' | 'last_name' | 'email' | 'username' | 'password' | 'confirm_password',
+            id as 'email' | 'username' | 'password' | 'confirm_password',
             validation,
           )}
           aria-invalid={!!errors[id]}
@@ -174,10 +171,7 @@ const Registration: React.FC = () => {
               
               // Transform local data to the format expected by the API
               const apiData = {
-                first_name: data.first_name,
-                last_name: data.last_name,
                 email: data.email,
-                username: data.username,
                 password: data.password,
                 token: token ?? undefined,
               };
@@ -189,52 +183,7 @@ const Registration: React.FC = () => {
               registerUser.mutate(apiData);
             })}
           >
-            {renderInput('first_name', 'com_auth_first_name', 'text', {
-              required: localize('com_auth_first_name_required'),
-              minLength: {
-                value: 2,
-                message: localize('com_auth_first_name_min_length'),
-              },
-              maxLength: {
-                value: 50,
-                message: localize('com_auth_first_name_max_length'),
-              },
-              pattern: {
-                value: /^[a-zA-Z\s'-]+$/,
-                message: 'First name must contain only letters and spaces',
-              },
-            })}
-            {renderInput('last_name', 'com_auth_last_name', 'text', {
-              required: localize('com_auth_last_name_required'),
-              minLength: {
-                value: 2,
-                message: localize('com_auth_last_name_min_length'),
-              },
-              maxLength: {
-                value: 50,
-                message: localize('com_auth_last_name_max_length'),
-              },
-              pattern: {
-                value: /^[a-zA-Z\s'-]+$/,
-                message: 'Last name must contain only letters and spaces',
-              },
-            })}
-            {renderInput('username', 'com_auth_username', 'text', {
-              required: 'Username is required',
-              minLength: {
-                value: 3,
-                message: localize('com_auth_username_min_length'),
-              },
-              maxLength: {
-                value: 30,
-                message: localize('com_auth_username_max_length'),
-              },
-              pattern: {
-                value: /^[a-zA-Z0-9_]+$/,
-                message: 'Username must contain only letters, numbers, and underscores',
-              },
-            })}
-            {renderInput('email', 'com_auth_email', 'email', {
+                                                {renderInput('email', 'com_auth_email', 'email', {
               required: localize('com_auth_email_required'),
               minLength: {
                 value: 1,

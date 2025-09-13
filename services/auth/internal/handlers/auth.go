@@ -75,6 +75,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+// Derive username from email if not provided
+if strings.TrimSpace(req.Username) == "" && req.Email != "" {
+local := req.Email
+if at := strings.Index(local, "@"); at > 0 {
+local = local[:at]
+}
+ttderived := sanitizeInput(local)
+ttif derived == "" {
+tttderived = "user"
+tt}
+ttreq.Username = derived
+t}
 	// Additional validation
 	if validationErrors := req.Validate(); len(validationErrors) > 0 {
 		h.logger.WithField("errors", validationErrors).Error("Registration validation failed")
