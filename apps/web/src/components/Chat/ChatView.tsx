@@ -94,7 +94,7 @@ function ChatView({ index = 0 }: { index?: number }) {
                     className={cn(
                       'mx-auto w-full pb-4 sm:w-4/5 sm:pb-6',
                       'max-w-4xl transition-all duration-200',
-                      '-mt-4',
+                      '-mt-6',
                     )}
                   >
                     <ChatForm index={index} />

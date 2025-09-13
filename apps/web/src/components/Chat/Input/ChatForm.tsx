@@ -197,9 +197,9 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-4 m-0 w-full resize-none py-[15px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
+        'md:py-2 m-0 w-full resize-none py-[10px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
         'text-base md:text-lg font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
-        isCollapsed ? 'max-h-[62px]' : 'max-h-[50vh] md:max-h-[62vh]',
+        isCollapsed ? 'max-h-[45px]' : 'max-h-[35vh] md:max-h-[40vh]',
         isMoreThanThreeRows ? 'pl-5' : 'px-5',
         'shadow-inner',
       ),
@@ -216,13 +216,13 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
         'sm:w-12/12 md:w-12/12 lg:w-12/12 w-full px-2 sm:px-3 md:px-4',
         // Responsive max-width - slightly wider for better UX
         'xl:max-w-8xl 2xl:max-w-9xl max-w-full sm:max-w-5xl md:max-w-6xl lg:max-w-7xl',
-        // Responsive margins - fixed for mobile
+        // Responsive margins - moved up more
         centerFormOnLanding &&
           (conversationId == null || conversationId === Constants.NEW_CONVO) &&
           !isSubmitting &&
           conversation?.messages?.length === 0
-          ? '-mb-6 transition-all duration-200 sm:-mb-5 md:-mb-4 lg:-mb-3'
-          : '-mb-6 sm:-mb-5 md:-mb-4 lg:-mb-3',
+          ? '-mb-8 transition-all duration-200 sm:-mb-7 md:-mb-6 lg:-mb-5'
+          : '-mb-8 sm:-mb-7 md:-mb-6 lg:-mb-5',
       )}
     >
       <div className="relative flex h-full flex-1 items-stretch md:flex-col">
@@ -248,7 +248,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-4 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[2rem] border pb-2 text-text-primary shadow-md transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[2.5rem] sm:pb-1',
+              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-2 text-text-primary shadow-md transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[1.75rem] sm:pb-1',
               isTemporary
                 ? 'border-violet-800/60 bg-violet-950/10'
                 : 'border-border-light bg-white dark:bg-gray-800',
@@ -294,8 +294,8 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                     'placeholder:text-gray-500 placeholder:dark:text-gray-400',
                     'placeholder:duration-800 placeholder:ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:transition-all',
                     'dynamic-placeholder dynamic-placeholder-transition',
-                    // Responsive textarea styling - 25% larger size
-                    'max-h-[225px] min-h-[75px] w-full text-lg sm:max-h-[375px]',
+                    // Responsive textarea styling - reduced height
+                    'max-h-[150px] min-h-[50px] w-full text-lg sm:max-h-[200px]',
                   )}
                 />
                 <div className="flex flex-col items-start justify-start pt-1.5">

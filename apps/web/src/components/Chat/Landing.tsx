@@ -45,9 +45,9 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
 
   return (
     <div
-      className={`-mt-16 flex h-full transform-gpu flex-col items-center justify-center pb-16 transition-all duration-200 ${centerFormOnLanding ? 'max-h-full sm:max-h-0' : 'max-h-full'}`}
+      className={`-mt-32 flex h-full transform-gpu flex-col items-center justify-center pb-20 transition-all duration-200 ${centerFormOnLanding ? 'max-h-full sm:max-h-0' : 'max-h-full'}`}
     >
-      <div className="flex flex-col items-center gap-0 p-2">
+      <div className="flex flex-col items-center gap-0 p-1">
         {/* Logo + ShopMindAI - exact ca în pagina de login */}
         <div className="flex items-center justify-center gap-4">
           <LogoIcon size={64} className="text-[#4d8eff]" />
@@ -58,7 +58,7 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
         </div>
 
         {description && (
-          <div className="animate-fadeIn mt-4 max-w-md text-center text-sm font-normal text-text-primary">
+          <div className="animate-fadeIn mt-2 max-w-md text-center text-sm font-normal text-text-primary">
             {description}
           </div>
         )}
