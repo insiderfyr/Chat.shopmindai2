@@ -55,9 +55,10 @@ func (s *Server) handleChatStream(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Connection", "keep-alive")
 
 	sessionID := chi.URLParam(r, "sessionId")
-	log.Info().Str("sessionId", sessionID).Msg("starting SSE stream")
+	log.Info().Str("sessionId", sessionID).Str("llmProxyURL", s.cfg.LLMProxyURL).Msg("starting SSE stream")
 
 	if s.cfg.LLMProxyURL == "" {
+		log.Warn().Msg("LLM proxy not configured")
 		http.Error(w, "LLM proxy not configured", http.StatusServiceUnavailable)
 		return
 	}
