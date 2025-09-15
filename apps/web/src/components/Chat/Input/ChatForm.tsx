@@ -197,10 +197,10 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-2 m-0 w-full resize-none py-[10px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
-        'text-base md:text-lg font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
-        isCollapsed ? 'max-h-[45px]' : 'max-h-[35vh] md:max-h-[40vh]',
-        isMoreThanThreeRows ? 'pl-5' : 'px-5',
+        'md:py-1.5 m-0 w-full resize-none py-[8px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
+        'text-sm md:text-base font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
+        isCollapsed ? 'max-h-[40px]' : 'max-h-[30vh] md:max-h-[35vh]',
+        isMoreThanThreeRows ? 'pl-4' : 'px-4',
         'shadow-inner',
       ),
     [isCollapsed, isMoreThanThreeRows],
@@ -211,7 +211,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
       onSubmit={methods.handleSubmit(submitMessage)}
       className={cn(
         // Responsive width and layout
-        'mx-auto flex flex-row gap-2 transition-all duration-300 ease-in-out sm:gap-3',
+        'mx-auto flex flex-row gap-1.5 transition-all duration-300 ease-in-out sm:gap-2',
         // Mobile-first responsive design - slightly wider
         'sm:w-12/12 md:w-12/12 lg:w-12/12 w-full px-2 sm:px-3 md:px-4',
         // Responsive max-width - slightly wider for better UX
@@ -248,7 +248,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-2 text-text-primary shadow-md transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[1.75rem] sm:pb-1',
+              'relative mt-1.5 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.25rem] border pb-1.5 text-text-primary shadow-md transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[1.5rem] sm:pb-1',
               isTemporary
                 ? 'border-violet-800/60 bg-violet-950/10'
                 : 'border-border-light bg-white dark:bg-gray-800',
@@ -295,7 +295,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                     'placeholder:duration-800 placeholder:ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:transition-all',
                     'dynamic-placeholder dynamic-placeholder-transition',
                     // Responsive textarea styling - reduced height
-                    'max-h-[150px] min-h-[50px] w-full text-lg sm:max-h-[200px]',
+                    'max-h-[120px] min-h-[40px] w-full text-base sm:max-h-[160px]',
                   )}
                 />
                 <div className="flex flex-col items-start justify-start pt-1.5">
@@ -307,19 +307,13 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                 </div>
               </div>
             )}
+            {/* BadgeRow rămâne în poziția actuală */}
             <div
               className={cn(
                 'items-between flex gap-2 bg-white pb-1.5 dark:bg-gray-800',
                 isRTL ? 'flex-row-reverse' : 'flex-row',
               )}
             >
-              <div className={`${isRTL ? 'mr-2.5' : 'ml-2.5'} flex items-center gap-2 sm:gap-2.5`}>
-                <AttachFileChat disableInputs={disableInputs} />
-
-                {/* Premium Shopping Buttons - Separate Components */}
-                <DailyDealsButton />
-                <DiscountHunterButton />
-              </div>
               <BadgeRow
                 showEphemeralBadges={!isAgentsEndpoint(endpoint) && !isAssistantsEndpoint(endpoint)}
                 isSubmitting={isSubmitting || isSubmittingAdded}
@@ -329,7 +323,20 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                   Array.isArray(conversation?.messages) && conversation.messages.length >= 1
                 }
               />
-              <div className="mx-auto flex" />
+            </div>
+
+            {/* Butoanele mutate mai jos */}
+            <div className={cn(
+              'flex items-center justify-between mt-2 px-3',
+              isRTL ? 'flex-row-reverse' : 'flex-row'
+            )}>
+              <div className={`${isRTL ? 'mr-2' : 'ml-2'} flex items-center gap-1.5 sm:gap-2`}>
+                <AttachFileChat disableInputs={disableInputs} />
+
+                {/* Premium Shopping Buttons - Separate Components */}
+                <DailyDealsButton />
+                <DiscountHunterButton />
+              </div>
 
               <div className={`${isRTL ? 'ml-2.5' : 'mr-2.5'}`}>
                 {(isSubmitting || isSubmittingAdded) && (showStopButton || showStopAdded) ? (
