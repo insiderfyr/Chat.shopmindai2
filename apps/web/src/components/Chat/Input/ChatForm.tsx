@@ -197,11 +197,11 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-1.5 m-0 w-full resize-none py-[8px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
+        'md:py-1.5 m-0 w-full resize-none py-[4px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
         'text-sm md:text-base font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
         isCollapsed ? 'max-h-[40px]' : 'max-h-[30vh] md:max-h-[35vh]',
         isMoreThanThreeRows ? 'pl-4' : 'px-4',
-        'shadow-inner',
+        
       ),
     [isCollapsed, isMoreThanThreeRows],
   );
@@ -215,7 +215,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
         // Mobile-first responsive design - slightly wider
         'sm:w-12/12 md:w-12/12 lg:w-12/12 w-full px-2 sm:px-3 md:px-4',
         // Responsive max-width - slightly wider for better UX
-        'xl:max-w-8xl 2xl:max-w-9xl max-w-full sm:max-w-5xl md:max-w-6xl lg:max-w-7xl',
+        'xl:max-w-none 2xl:max-w-none max-w-none sm:max-w-none md:max-w-none lg:max-w-none',
         // Responsive margins - moved up more
         centerFormOnLanding &&
           (conversationId == null || conversationId === Constants.NEW_CONVO) &&
@@ -248,7 +248,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-1.5 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-1.5 text-text-primary shadow-md transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[1.75rem] sm:pb-1',
+              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-1 text-text-primary shadow-lg shadow-inner ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200 dark:shadow-gray-900/30 sm:rounded-[1.75rem] sm:pb-1',
               isTemporary
                 ? 'border-violet-800/60 bg-violet-950/10'
                 : 'border-border-light bg-white dark:bg-gray-800',
@@ -295,7 +295,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                     'placeholder:duration-800 placeholder:ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:transition-all',
                     'dynamic-placeholder dynamic-placeholder-transition',
                     // Responsive textarea styling - reduced height
-                    'max-h-[120px] min-h-[40px] w-full text-base sm:max-h-[160px]',
+                    'max-h-[100px] min-h-[36px] w-full text-base sm:max-h-[140px] mt-2',
                   )}
                 />
                 <div className="flex flex-col items-start justify-start pt-1.5">
@@ -327,10 +327,10 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
 
             {/* Butoanele mutate mai jos */}
             <div className={cn(
-              'flex items-center justify-between mt-2 px-3',
+              'flex items-center justify-between mt-2 px-1',
               isRTL ? 'flex-row-reverse' : 'flex-row'
             )}>
-              <div className={`${isRTL ? 'mr-2' : 'ml-2'} flex items-center gap-1.5 sm:gap-2`}>
+              <div className={`${isRTL ? 'mr-1' : 'ml-1'} flex items-center gap-1.5 sm:gap-2`}>
                 <AttachFileChat disableInputs={disableInputs} />
 
                 {/* Premium Shopping Buttons - Separate Components */}
@@ -338,7 +338,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                 <DiscountHunterButton />
               </div>
 
-              <div className={`${isRTL ? 'ml-2.5' : 'mr-2.5'}`}>
+              <div className={`${isRTL ? 'ml-1.5' : 'mr-1.5'}`}>
                 {(isSubmitting || isSubmittingAdded) && (showStopButton || showStopAdded) ? (
                   <StopButton stop={handleStopGenerating} setShowStopButton={setShowStopButton} />
                 ) : (
