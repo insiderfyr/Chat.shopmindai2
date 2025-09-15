@@ -10,7 +10,7 @@ import axios from 'axios';
 
 // Custom auth service configuration
 const authService = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:3080',
   timeout: 10000,
 });
 
@@ -26,7 +26,7 @@ export const useLoginUserMutation = (
   return useMutation([MutationKeys.loginUser], {
     mutationFn: async (payload: t.TLoginUser) => {
       console.log("🚀 Login API Request - Payload:", payload);
-      console.log("🚀 Login API Request - Sending to:", 'http://localhost:8080/api/v1/auth/login');
+      console.log("🚀 Login API Request - Sending to:", 'http://localhost:3080/api/v1/auth/login');
       
       const requestData = {
         username: payload.email, // Our auth service expects username
@@ -149,7 +149,7 @@ export const useRegisterUserMutation = (
   return useMutation([MutationKeys.registerUser], {
     mutationFn: async (payload: t.TRegisterUser) => {
       console.log("📝 Registration API Request - Payload:", payload);
-      console.log("📝 Registration API Request - Sending to:", 'http://localhost:8080/api/v1/auth/register');
+      console.log("📝 Registration API Request - Sending to:", 'http://localhost:3080/api/v1/auth/register');
       
       const requestData = {
         username: payload.email,

@@ -323,6 +323,41 @@ app.get('/api/messages/:conversationId', (req, res) => {
   res.json([]);
 });
 
+// Auth service config for frontend
+app.get('/api/auth/config', (req, res) => {
+  res.json({
+    data: {
+      keycloak: {
+        url: 'http://localhost:8081/auth',
+        realm: 'ShopMindAI',
+        clientId: 'auth-service',
+        authUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/auth',
+        tokenUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/token',
+        logoutUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/logout'
+      },
+      endpoints: {
+        login: '/api/v1/auth/login',
+        register: '/api/v1/auth/register',
+        refresh: '/api/v1/auth/refresh',
+        logout: '/api/v1/auth/logout',
+        profile: '/api/v1/user/profile'
+      },
+      features: {
+        registration: true,
+        passwordReset: true,
+        emailVerification: false,
+        socialLogin: false
+      },
+      validation: {
+        username: { minLength: 3, maxLength: 30, pattern: '^[a-zA-Z0-9_]+$' },
+        password: { minLength: 8, maxLength: 128, requirements: ['At least one uppercase letter','At least one lowercase letter','At least one number','At least one special character'] },
+        email: { required: true, pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$' }
+      }
+    },
+    message: 'Auth configuration for ShopMindAI'
+  });
+});
+
 // Generic API routes
 app.get('/api/*', (req, res) => {
   res.json({

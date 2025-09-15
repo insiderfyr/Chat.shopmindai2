@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Custom auth service configuration
 const authService = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://localhost:3080',
   timeout: 10000,
 });
 
