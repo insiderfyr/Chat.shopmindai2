@@ -11,10 +11,10 @@ const DiscountHunterButton = () => {
     <button
       type="button"
       onClick={handleClick}
-      className={`flex transform items-center rounded-xl border px-3 py-2 text-sm transition-all duration-300 ease-in-out sm:px-3.5 ${
+      className={`flex transform items-center rounded-2xl border px-2.5 py-1.5 text-sm transition-all duration-300 ease-in-out sm:px-3 ${
         isActive
-          ? 'scale-105 border-[#3b82f6] bg-[#3b82f6] text-white shadow-lg hover:border-[#2563eb] hover:bg-[#2563eb]'
-          : 'border-[#3b82f6] bg-white text-[#3b82f6] hover:border-[#2563eb] hover:bg-blue-50 hover:text-[#2563eb]'
+          ? 'border-[#4d8eff] bg-[#4d8eff] text-white shadow-lg hover:border-[#3d7eff] hover:bg-[#3d7eff]'
+          : 'border-[#4d8eff] bg-white text-[#4d8eff] hover:border-[#3d7eff] hover:bg-blue-50 hover:text-[#3d7eff]'
       }`}
       title="Find the best discounts and price drops"
     >
