@@ -11,7 +11,7 @@ const DiscountHunterButton = () => {
     <button
       type="button"
       onClick={handleClick}
-      className={`flex transform items-center rounded-xl border px-2.5 py-2 text-sm transition-all duration-300 ease-in-out sm:px-3 ${
+      className={`flex transform items-center rounded-xl border px-2 py-1.5 text-xs transition-all duration-300 ease-in-out sm:px-2.5 ${
         isActive
           ? 'scale-105 border-[#3b82f6] bg-[#3b82f6] text-white shadow-lg hover:border-[#2563eb] hover:bg-[#2563eb]'
           : 'border-[#3b82f6] bg-white text-[#3b82f6] hover:border-[#2563eb] hover:bg-blue-50 hover:text-[#2563eb]'
