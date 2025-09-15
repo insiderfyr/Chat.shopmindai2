@@ -6,6 +6,8 @@ type Config struct {
 	Port           string
 	Env            string
 	AllowedOrigins string
+	LLMProxyURL    string // ex: http://localhost:9000
+	LLMProxyToken  string // optional: Authorization Bearer
 }
 
 func Load() Config {
@@ -13,6 +15,8 @@ func Load() Config {
 		Port:           getenv("APP_PORT", "8080"),
 		Env:            getenv("APP_ENV", "dev"),
 		AllowedOrigins: getenv("ALLOWED_ORIGINS", "*"),
+		LLMProxyURL:    getenv("LLM_PROXY_URL", ""),
+		LLMProxyToken:  getenv("LLM_PROXY_TOKEN", ""),
 	}
 }
 

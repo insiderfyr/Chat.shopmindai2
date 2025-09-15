@@ -3,7 +3,6 @@ package httpserver
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
@@ -58,15 +57,47 @@ func (s *Server) handleChatStream(w http.ResponseWriter, r *http.Request) {
 	sessionID := chi.URLParam(r, "sessionId")
 	log.Info().Str("sessionId", sessionID).Msg("starting SSE stream")
 
-	send := func(event, data string) {
-		_, _ = fmt.Fprintf(w, "event: %s\n", event)
-		_, _ = fmt.Fprintf(w, "data: %s\n\n", data)
-		flusher.Flush()
+	if s.cfg.LLMProxyURL == "" {
+		http.Error(w, "LLM proxy not configured", http.StatusServiceUnavailable)
+		return
 	}
 
-	send("token", `{"delta":"Hello"}`)
-	time.Sleep(150 * time.Millisecond)
-	send("token", `{"delta":", world!"}`)
-	time.Sleep(100 * time.Millisecond)
-	send("completed", `{"usage":{"prompt":10,"completion":2}}`)
+	// Forward body to llm-proxy (expects POST streaming SSE)
+	req, err := http.NewRequestWithContext(r.Context(), "POST", s.cfg.LLMProxyURL+"/v1/chat/stream", r.Body)
+	if err != nil {
+		http.Error(w, "failed to build upstream request", http.StatusInternalServerError)
+		return
+	}
+	req.Header.Set("Content-Type", r.Header.Get("Content-Type"))
+	req.Header.Set("Accept", "text/event-stream")
+	if s.cfg.LLMProxyToken != "" {
+		req.Header.Set("Authorization", "Bearer "+s.cfg.LLMProxyToken)
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		http.Error(w, "upstream unavailable", http.StatusBadGateway)
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		http.Error(w, fmt.Sprintf("upstream error: %s", resp.Status), http.StatusBadGateway)
+		return
+	}
+
+	// Pipe SSE 1:1
+	buf := make([]byte, 16*1024)
+	for {
+		n, readErr := resp.Body.Read(buf)
+		if n > 0 {
+			if _, writeErr := w.Write(buf[:n]); writeErr != nil {
+				return
+			}
+			flusher.Flush()
+		}
+		if readErr != nil {
+			break
+		}
+	}
 }
