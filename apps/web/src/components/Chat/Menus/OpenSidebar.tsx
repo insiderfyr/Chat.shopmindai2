@@ -1,5 +1,4 @@
 import { TooltipAnchor, Button } from '~/components/ui';
-import { Sidebar } from '~/components/svg';
 import { useLocalize } from '~/hooks';
 
 export default function OpenSidebar({
@@ -25,7 +24,10 @@ export default function OpenSidebar({
             })
           }
         >
-          <Sidebar />
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="3" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <line x1="9" y1="4" x2="9" y2="20" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </Button>
       }
     />

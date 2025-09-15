@@ -121,7 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, activeItem = 'home', onIte
           onClick={item.onClick}
           className={cn(
             'group relative flex h-12 w-full items-center justify-center rounded-xl transition-all duration-200 ease-in-out',
-            'hover:bg-gray-200/80 dark:hover:bg-gray-700/80',
+            'hover:bg-gray-300/80 dark:hover:bg-gray-800/80',
             'focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2',
             item.isActive && 'bg-blue-50 dark:bg-blue-900/20',
             item.id === 'logo' && 'mb-6 h-16',

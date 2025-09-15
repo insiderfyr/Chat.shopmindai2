@@ -35,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       <div className="flex flex-col items-center gap-2">
         <button
           onClick={() => navigate('/c/new')}
-          className="group flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 transition-all duration-300 hover:scale-105 hover:bg-gray-200 active:scale-[0.97]"
+          className="group flex h-10 w-10 items-center justify-center rounded-xl bg-gray-100 transition-all duration-300 hover:scale-105 hover:bg-gray-300 active:scale-[0.97]"
         >
           <svg
             className="h-5 w-5 text-gray-600 group-hover:text-gray-800"
@@ -53,7 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       <div className="flex flex-col items-center gap-2">
         <button
           onClick={handleHistory}
-          className="group flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 transition-all duration-300 hover:scale-105 hover:bg-blue-200 active:scale-[0.97]"
+          className="group flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 transition-all duration-300 hover:scale-105 hover:bg-blue-300 active:scale-[0.97]"
         >
           <History className="h-5 w-5 text-blue-600 group-hover:text-blue-800" />
         </button>

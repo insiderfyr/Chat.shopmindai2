@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { QueryKeys, Constants } from 'librechat-data-provider';
 import type { TMessage, TStartupConfig } from 'librechat-data-provider';
-import { NewChatIcon, MobileSidebar, Sidebar } from '~/components/svg';
+import { NewChatIcon } from '~/components/svg';
 import { getDefaultModelSpec, getModelSpecPreset } from '~/utils';
 import { TooltipAnchor, Button } from '~/components/ui';
 import { useLocalize, useNewConvo } from '~/hooks';
@@ -61,11 +61,17 @@ export default function NewChat({
               variant="outline"
               data-testid="close-sidebar-button"
               aria-label={localize('com_nav_close_sidebar')}
-              className="rounded-md border-none bg-transparent p-2 hover:bg-blue-50 dark:hover:bg-[#2a3a4a] md:rounded-md"
+              className="rounded-md border-none bg-transparent p-2 hover:bg-blue-100 dark:hover:bg-[#2a3a4a] md:rounded-md"
               onClick={toggleNav}
             >
-              <Sidebar className="max-md:hidden" />
-              <MobileSidebar className="m-1 inline-flex size-10 items-center justify-center md:hidden" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className="max-md:hidden">
+                <rect x="3" y="3" width="18" height="18" rx="3" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="9" y1="4" x2="9" y2="20" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className="m-1 inline-flex size-10 items-center justify-center md:hidden">
+                <rect x="3" y="3" width="18" height="18" rx="3" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="9" y1="4" x2="9" y2="20" stroke="#333333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
             </Button>
           }
         />
@@ -79,7 +85,7 @@ export default function NewChat({
                 variant="outline"
                 data-testid="nav-new-chat-button"
                 aria-label={localize('com_ui_new_chat')}
-                className="rounded-md border-none bg-transparent p-2 hover:bg-blue-50 dark:hover:bg-[#2a3a4a] md:rounded-md"
+                className="rounded-md border-none bg-transparent p-2 hover:bg-blue-100 dark:hover:bg-[#2a3a4a] md:rounded-md"
                 onClick={clickHandler}
               >
                 <NewChatIcon className="icon-md md:h-6 md:w-6" />
