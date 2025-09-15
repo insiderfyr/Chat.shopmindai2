@@ -12,7 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/shopmindai/orchestrator/internal/config"
-	"github.com/shopmindai/orchestrator/internal/httpserver"
+	httpserver "github.com/shopmindai/orchestrator/internal/http"
 	"github.com/shopmindai/orchestrator/internal/version"
 )
 
