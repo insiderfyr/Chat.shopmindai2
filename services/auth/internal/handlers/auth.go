@@ -42,6 +42,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	// Basic input sanitization
 	req.Username = sanitizeInput(req.Username)
 
+	// Normalize username for authentication (skip if email)
+	if !strings.Contains(req.Username, "@") {
+		req.Username = models.NormalizeUsername(req.Username)
+	}
+
 	// Authenticate with Keycloak
 	authResponse, err := h.keycloakService.Login(req.Username, req.Password)
 	if err != nil {
@@ -75,18 +80,22 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
-// Derive username from email if not provided
-if strings.TrimSpace(req.Username) == "" && req.Email != "" {
-local := req.Email
-if at := strings.Index(local, "@"); at > 0 {
-local = local[:at]
-}
-ttderived := sanitizeInput(local)
-ttif derived == "" {
-tttderived = "user"
-tt}
-ttreq.Username = derived
-t}
+	// Derive username from email if not provided
+	if strings.TrimSpace(req.Username) == "" && req.Email != "" {
+		local := req.Email
+		if at := strings.Index(local, "@"); at > 0 {
+			local = local[:at]
+		}
+		derived := sanitizeInput(local)
+		if derived == "" {
+			derived = "user"
+		}
+		req.Username = derived
+	}
+
+	// Normalize username before validation
+	req.Username = models.NormalizeUsername(req.Username)
+
 	// Additional validation
 	if validationErrors := req.Validate(); len(validationErrors) > 0 {
 		h.logger.WithField("errors", validationErrors).Error("Registration validation failed")

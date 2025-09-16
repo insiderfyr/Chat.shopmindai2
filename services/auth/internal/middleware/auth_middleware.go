@@ -11,9 +11,11 @@ import (
 
 	"github.com/Nerzal/gocloak/v13"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
-// Simple in-memory rate limiter for MVP
+// -------------------- Rate Limiter --------------------
+
 type rateLimiter struct {
 	requests map[string][]time.Time
 	mutex    sync.RWMutex
@@ -36,7 +38,7 @@ func (rl *rateLimiter) allow(ip string) bool {
 	now := time.Now()
 	windowStart := now.Add(-rl.window)
 
-	// Clean old requests
+	// păstrăm doar request-urile din fereastra curentă
 	if requests, exists := rl.requests[ip]; exists {
 		var validRequests []time.Time
 		for _, reqTime := range requests {
@@ -47,23 +49,25 @@ func (rl *rateLimiter) allow(ip string) bool {
 		rl.requests[ip] = validRequests
 	}
 
-	// Check if limit exceeded
+	// verificăm dacă depășește limita
 	if len(rl.requests[ip]) >= rl.limit {
 		return false
 	}
 
-	// Add current request
+	// adăugăm requestul curent
 	rl.requests[ip] = append(rl.requests[ip], now)
 	return true
 }
 
-var authRateLimiter = newRateLimiter(50, time.Minute)    // 50 auth attempts per minute for testing
-var generalRateLimiter = newRateLimiter(100, time.Minute) // 100 general requests per minute
+var authRateLimiter = newRateLimiter(50, time.Minute)     // 50 req/min pentru login/register
+var generalRateLimiter = newRateLimiter(100, time.Minute) // 100 req/min pentru endpoints generale
 
-// AuthMiddleware validates JWT tokens from Keycloak
+// -------------------- Auth Middleware --------------------
+
+// AuthMiddleware validează JWT-urile de la Keycloak
 func AuthMiddleware(cfg *config.Config, logger *logger.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Rate limiting for protected routes
+		// rate limiting pe rute protejate
 		if !generalRateLimiter.allow(c.ClientIP()) {
 			c.JSON(http.StatusTooManyRequests, models.ErrorResponse{
 				Error:   "rate_limit_exceeded",
@@ -74,7 +78,7 @@ func AuthMiddleware(cfg *config.Config, logger *logger.Logger) gin.HandlerFunc {
 			return
 		}
 
-		// Get token from Authorization header
+		// verificăm headerul Authorization
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, models.ErrorResponse{
@@ -86,9 +90,8 @@ func AuthMiddleware(cfg *config.Config, logger *logger.Logger) gin.HandlerFunc {
 			return
 		}
 
-		// Check if token starts with "Bearer "
-		tokenParts := strings.Split(authHeader, " ")
-		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
 			c.JSON(http.StatusUnauthorized, models.ErrorResponse{
 				Error:   "unauthorized",
 				Message: "Invalid authorization header format",
@@ -98,57 +101,43 @@ func AuthMiddleware(cfg *config.Config, logger *logger.Logger) gin.HandlerFunc {
 			return
 		}
 
-		token := tokenParts[1]
+		accessToken := parts[1]
 
-		// Validate token with Keycloak
+		// validăm JWT cu gocloak și extragem claims
 		client := gocloak.NewClient(cfg.Keycloak.URL)
-		result, err := client.RetrospectToken(c.Request.Context(), token, cfg.Keycloak.ClientID, cfg.Keycloak.ClientSecret, cfg.Keycloak.Realm)
+
+		customClaims := jwt.MapClaims{}
+		_, err := client.DecodeAccessTokenCustomClaims(c.Request.Context(), accessToken, cfg.Keycloak.Realm, &customClaims)
 		if err != nil {
-			logger.WithError(err).Error("Failed to validate token")
+			logger.WithError(err).Error("Failed to decode access token")
 			c.JSON(http.StatusUnauthorized, models.ErrorResponse{
 				Error:   "unauthorized",
-				Message: "Invalid token",
+				Message: "Invalid or expired token",
 				Code:    http.StatusUnauthorized,
 			})
 			c.Abort()
 			return
 		}
 
-		// Check if token is active
-		if !*result.Active {
-			c.JSON(http.StatusUnauthorized, models.ErrorResponse{
-				Error:   "unauthorized",
-				Message: "Token is not active",
-				Code:    http.StatusUnauthorized,
-			})
-			c.Abort()
-			return
+		// adăugăm user info în context
+		if username, ok := customClaims["preferred_username"].(string); ok {
+			c.Set("username", username)
+		}
+		if email, ok := customClaims["email"].(string); ok {
+			c.Set("email", email)
+		}
+		if sub, ok := customClaims["sub"].(string); ok {
+			c.Set("user_id", sub)
 		}
 
-		// Get user info and add to context
-		userInfo, err := client.GetUserInfo(c.Request.Context(), token, cfg.Keycloak.Realm)
-		if err != nil {
-			logger.WithError(err).Error("Failed to get user info")
-			c.JSON(http.StatusUnauthorized, models.ErrorResponse{
-				Error:   "unauthorized",
-				Message: "Failed to get user info",
-				Code:    http.StatusUnauthorized,
-			})
-			c.Abort()
-			return
-		}
-
-		// Add user info to context
-		c.Set("user_id", *userInfo.Sub)
-		c.Set("username", *userInfo.PreferredUsername)
-		c.Set("email", *userInfo.Email)
-		c.Set("access_token", token)
-
+		c.Set("access_token", accessToken)
 		c.Next()
 	}
 }
 
-// AuthRateLimitMiddleware for auth endpoints (login, register)
+// -------------------- Extra Middlewares --------------------
+
+// pentru login/register rate limiting
 func AuthRateLimitMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if !authRateLimiter.allow(c.ClientIP()) {
@@ -164,7 +153,7 @@ func AuthRateLimitMiddleware() gin.HandlerFunc {
 	}
 }
 
-// LoggerMiddleware logs HTTP requests
+// LoggerMiddleware loghează requesturile HTTP
 func LoggerMiddleware(logger *logger.Logger) gin.HandlerFunc {
 	return gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
 		logger.WithFields(map[string]interface{}{
@@ -179,31 +168,25 @@ func LoggerMiddleware(logger *logger.Logger) gin.HandlerFunc {
 	})
 }
 
-// CORSMiddleware handles CORS - FIXED for MVP security
+// CORSMiddleware
 func CORSMiddleware(cfg *config.Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get allowed origins from config, default to localhost for MVP
 		allowedOrigins := []string{
 			"http://localhost:3000",
 			"http://localhost:3080",
 			"http://localhost:3090",
 			"http://localhost:8080",
-			"https://yourdomain.com", // Add your actual domain here
+			"https://yourdomain.com",
 		}
 
 		origin := c.Request.Header.Get("Origin")
-		allowed := false
-		for _, allowedOrigin := range allowedOrigins {
-			if origin == allowedOrigin {
-				allowed = true
+		for _, allowed := range allowedOrigins {
+			if origin == allowed {
+				c.Header("Access-Control-Allow-Origin", origin)
 				break
 			}
 		}
 
-		if allowed {
-			c.Header("Access-Control-Allow-Origin", origin)
-		}
-		
 		c.Header("Access-Control-Allow-Credentials", "true")
 		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
@@ -217,10 +200,9 @@ func CORSMiddleware(cfg *config.Config) gin.HandlerFunc {
 	}
 }
 
-// InputValidationMiddleware for basic security
+// InputValidationMiddleware
 func InputValidationMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Basic XSS protection
 		if strings.Contains(c.Request.URL.Path, "<script>") ||
 			strings.Contains(c.Request.URL.Path, "javascript:") {
 			c.JSON(http.StatusBadRequest, models.ErrorResponse{

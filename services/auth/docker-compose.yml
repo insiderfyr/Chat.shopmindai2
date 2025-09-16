@@ -130,19 +130,19 @@ services:
       
       # Keycloak config (using container network)
       KEYCLOAK_REALM: ShopMindAI
-      KEYCLOAK_URL: http://keycloak:8080/auth
-      KEYCLOAK_EXTERNAL_URL: http://localhost:8081/auth
-      KEYCLOAK_ISSUER_URL: http://keycloak:8080/auth/realms/ShopMindAI
-      KEYCLOAK_JWKS_URL: http://keycloak:8080/auth/realms/ShopMindAI/protocol/openid-connect/certs
-      KEYCLOAK_AUTH_URL: http://keycloak:8080/auth/realms/ShopMindAI/protocol/openid-connect/auth
-      KEYCLOAK_TOKEN_URL: http://keycloak:8080/auth/realms/ShopMindAI/protocol/openid-connect/token
-      KEYCLOAK_USERINFO_URL: http://keycloak:8080/auth/realms/ShopMindAI/protocol/openid-connect/userinfo
-      KEYCLOAK_LOGOUT_URL: http://keycloak:8080/auth/realms/ShopMindAI/protocol/openid-connect/logout
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_EXTERNAL_URL: http://localhost:8081
+      KEYCLOAK_ISSUER_URL: http://keycloak:8080/realms/ShopMindAI
+      KEYCLOAK_JWKS_URL: http://keycloak:8080/realms/ShopMindAI/protocol/openid-connect/certs
+      KEYCLOAK_AUTH_URL: http://keycloak:8080/realms/ShopMindAI/protocol/openid-connect/auth
+      KEYCLOAK_TOKEN_URL: http://keycloak:8080/realms/ShopMindAI/protocol/openid-connect/token
+      KEYCLOAK_USERINFO_URL: http://keycloak:8080/realms/ShopMindAI/protocol/openid-connect/userinfo
+      KEYCLOAK_LOGOUT_URL: http://keycloak:8080/realms/ShopMindAI/protocol/openid-connect/logout
       
       # External URLs for frontend (accessible from browser)
-      KEYCLOAK_EXTERNAL_AUTH_URL: http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/auth
-      KEYCLOAK_EXTERNAL_TOKEN_URL: http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/token
-      KEYCLOAK_EXTERNAL_LOGOUT_URL: http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/logout
+      KEYCLOAK_EXTERNAL_AUTH_URL: http://localhost:8081/realms/ShopMindAI/protocol/openid-connect/auth
+      KEYCLOAK_EXTERNAL_TOKEN_URL: http://localhost:8081/realms/ShopMindAI/protocol/openid-connect/token
+      KEYCLOAK_EXTERNAL_LOGOUT_URL: http://localhost:8081/realms/ShopMindAI/protocol/openid-connect/logout
       KEYCLOAK_CLIENT_ID: auth-service
       KEYCLOAK_CLIENT_SECRET: 1rRvRfiy9BKYxmUBeHV6bkLBFsRfCTrX
       KEYCLOAK_ADMIN_USER: admin

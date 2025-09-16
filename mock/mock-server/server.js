@@ -314,4 +314,4 @@ app.get('/api/auth/config', (req, res) => {
       validation: {
         username: { minLength: 3, maxLength: 30, pattern: '^[a-zA-Z0-9_]+$' },
         password: { minLength: 8, maxLength: 128, requirements: ['At least one uppercase letter','At least one lowercase letter','At least one number','At least one special character'] },
-        email: { required: true, pattern: '^[a-zA-Z0-9._
+        email: { required: true, pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$" }
