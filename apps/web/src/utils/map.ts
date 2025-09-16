@@ -55,8 +55,13 @@ export function mapAssistants(assistants: t.Assistant[]) {
 }
 
 /** Maps Agents by `id` for quick lookup */
-export function mapAgents(agents: t.Agent[]) {
+export function mapAgents(agents: t.Agent[] | undefined | null) {
   const agentsMap = {} as Record<string, t.Agent>;
+
+  if (!Array.isArray(agents)) {
+    console.warn('mapAgents: Expected array but received:', typeof agents, agents);
+    return agentsMap;
+  }
 
   for (const agent of agents) {
     agentsMap[agent.id] = agent;
