@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: ./services/orchestrator
+      dockerfile: Dockerfile
+    container_name: orchestrator
+    environment:
+      - APP_PORT=3080
+      - APP_ENV=dev
+      - ALLOWED_ORIGINS=*
+      - LLM_PROXY_URL=http://llm-proxy:9000
+    ports:
+      - "3080:3080"
+    depends_on:
+      - llm-proxy
+
+  llm-proxy:
+    build:
+      context: ./services/llm-proxy
+      dockerfile: Dockerfile
+    container_name: llm-proxy
+    environment:
+      - APP_PORT=9000
+      - APP_ENV=dev
+      - ALLOWED_ORIGINS=*
+      - LLM_PROVIDER=${LLM_PROVIDER}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_BASE_URL=${LLM_BASE_URL}
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE}
+    ports:
+      - "9000:9000"
+
+  chat-service:
+    build:
+      context: ./services/chat-service
+      dockerfile: Dockerfile
+    container_name: chat-service
+    environment:
+      - APP_PORT=8080
+      - APP_ENV=dev
+      - ALLOWED_ORIGINS=*
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: web
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
+
