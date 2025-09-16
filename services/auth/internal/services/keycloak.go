@@ -48,11 +48,11 @@ func (k *KeycloakService) Login(username, password string) (*models.AuthResponse
 
 	// Convert to our user model
 	user := &models.User{
-		ID:        *userInfo.Sub,
-		Username:  *userInfo.PreferredUsername,
-		Email:     *userInfo.Email,
-		FirstName: *userInfo.GivenName,
-		LastName:  *userInfo.FamilyName,
+		ID:        getString(userInfo.Sub),
+		Username:  getString(userInfo.PreferredUsername),
+		Email:     getString(userInfo.Email),
+		FirstName: getString(userInfo.GivenName),
+		LastName:  getString(userInfo.FamilyName),
 		Enabled:   true,
 	}
 
@@ -136,11 +136,11 @@ func (k *KeycloakService) RefreshToken(refreshToken string) (*models.AuthRespons
 
 	// Convert to our user model
 	user := &models.User{
-		ID:        *userInfo.Sub,
-		Username:  *userInfo.PreferredUsername,
-		Email:     *userInfo.Email,
-		FirstName: *userInfo.GivenName,
-		LastName:  *userInfo.FamilyName,
+		ID:        getString(userInfo.Sub),
+		Username:  getString(userInfo.PreferredUsername),
+		Email:     getString(userInfo.Email),
+		FirstName: getString(userInfo.GivenName),
+		LastName:  getString(userInfo.FamilyName),
 		Enabled:   true,
 	}
 
@@ -172,11 +172,11 @@ func (k *KeycloakService) GetUserProfile(accessToken string) (*models.User, erro
 	}
 
 	return &models.User{
-		ID:        *userInfo.Sub,
-		Username:  *userInfo.PreferredUsername,
-		Email:     *userInfo.Email,
-		FirstName: *userInfo.GivenName,
-		LastName:  *userInfo.FamilyName,
+		ID:        getString(userInfo.Sub),
+		Username:  getString(userInfo.PreferredUsername),
+		Email:     getString(userInfo.Email),
+		FirstName: getString(userInfo.GivenName),
+		LastName:  getString(userInfo.FamilyName),
 		Enabled:   true,
 	}, nil
 }
@@ -253,11 +253,19 @@ func (k *KeycloakService) ChangePassword(accessToken, currentPassword, newPasswo
 	}
 
 	// Set new password
-	err = k.client.SetPassword(k.ctx, adminToken.AccessToken, *userInfo.Sub, k.cfg.Realm, newPassword, false)
+	err = k.client.SetPassword(k.ctx, adminToken.AccessToken, getString(userInfo.Sub), k.cfg.Realm, newPassword, false)
 	if err != nil {
 		k.logger.WithError(err).Error("Failed to change password")
 		return fmt.Errorf("failed to change password")
 	}
 
 	return nil
+}
+
+// getString safely returns the value of a *string or an empty string if nil
+func getString(ptr *string) string {
+    if ptr == nil {
+        return ""
+    }
+    return *ptr
 }

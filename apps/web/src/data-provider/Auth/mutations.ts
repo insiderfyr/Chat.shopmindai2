@@ -10,9 +10,37 @@ import axios from 'axios';
 
 // Custom auth service configuration
 const authService = axios.create({
-  baseURL: 'http://localhost:3080',
+  baseURL: 'http://localhost:8080',
   timeout: 10000,
 });
+
+// Add request interceptor for better error handling
+authService.interceptors.request.use(
+  (config) => {
+    console.log(`🔄 Making request to: ${config.baseURL}${config.url}`);
+    console.log(`🔄 Request data:`, config.data);
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// Add response interceptor for better error handling
+authService.interceptors.response.use(
+  (response) => {
+    console.log(`✅ Response from: ${response.config.url}`);
+    console.log(`✅ Response status: ${response.status}`);
+    return response;
+  },
+  (error) => {
+    console.error('❌ Response interceptor error:', error);
+    console.error('❌ Error response:', error.response?.data);
+    console.error('❌ Error status:', error.response?.status);
+    return Promise.reject(error);
+  }
+);
 
 // Custom login mutation that works with our auth service
 export const useLoginUserMutation = (

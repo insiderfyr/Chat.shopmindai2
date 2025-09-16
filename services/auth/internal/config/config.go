@@ -120,7 +120,7 @@ func setDefaults() {
 	viper.SetDefault("KEYCLOAK_REALM", "ShopMindAI")
 	viper.SetDefault("KEYCLOAK_ADMIN_REALM", "master")
 	viper.SetDefault("KEYCLOAK_CLIENT_ID", "auth-service")
-	viper.SetDefault("KEYCLOAK_CLIENT_SECRET", "your-client-secret")
+	viper.SetDefault("KEYCLOAK_CLIENT_SECRET", "QLlzRfnzgSvlk9CuKXHW4xjCYGmExK7Y")
 	viper.SetDefault("KEYCLOAK_ADMIN_CLIENT_ID", "admin-cli")
 	viper.SetDefault("KEYCLOAK_ADMIN_USER", "admin")
 	viper.SetDefault("KEYCLOAK_ADMIN_PASS", "admin")

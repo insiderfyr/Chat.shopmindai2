@@ -39,7 +39,7 @@ func (r *RegisterRequest) Validate() []string {
 
 	// Username validation
 	if r.Username != "" && !isValidUsername(r.Username) {
-		errors = append(errors, "username must contain only letters, numbers, and underscores")
+		errors = append(errors, "username may contain letters, numbers, underscore, dot, and hyphen")
 	}
 
 	// Password validation
@@ -130,8 +130,32 @@ type SuccessResponse struct {
 
 // Helper validation functions
 func isValidUsername(username string) bool {
-	for _, char := range username {
-		if !unicode.IsLetter(char) && !unicode.IsDigit(char) && char != '_' {
+	// Allow letters, digits, underscore, dot, and hyphen.
+	// Disallow leading/trailing dot or hyphen and disallow consecutive dots.
+	if len(username) == 0 {
+		return false
+	}
+
+	var prevDot bool
+	for i, char := range username {
+		isAllowed := unicode.IsLetter(char) || unicode.IsDigit(char) || char == '_' || char == '.' || char == '-'
+		if !isAllowed {
+			return false
+		}
+
+		if char == '.' {
+			if i == 0 || i == len(username)-1 { // no leading/trailing dot
+				return false
+			}
+			if prevDot { // no consecutive dots
+				return false
+			}
+			prevDot = true
+		} else {
+			prevDot = false
+		}
+
+		if char == '-' && (i == 0 || i == len(username)-1) { // no leading/trailing hyphen
 			return false
 		}
 	}
@@ -170,4 +194,36 @@ func isValidName(name string) bool {
 		}
 	}
 	return true
+}
+
+// NormalizeUsername converts an arbitrary input into a safe username form that
+// passes validation policies: trims spaces, removes disallowed characters,
+// collapses consecutive dots, and trims leading/trailing dots or hyphens.
+func NormalizeUsername(input string) string {
+	s := strings.TrimSpace(input)
+
+	// Build only allowed characters
+	var b strings.Builder
+	b.Grow(len(s))
+
+	lastWasDot := false
+	for _, r := range s {
+		switch {
+		case unicode.IsLetter(r) || unicode.IsDigit(r) || r == '_' || r == '-':
+			b.WriteRune(r)
+			lastWasDot = false
+		case r == '.':
+			if !lastWasDot { // collapse consecutive dots
+				b.WriteRune('.')
+				lastWasDot = true
+			}
+		default:
+			// drop any other character
+		}
+	}
+
+	out := b.String()
+	// Trim leading/trailing '.' or '-'
+	out = strings.Trim(out, "-. ")
+	return out
 }
