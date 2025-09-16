@@ -12,7 +12,7 @@ type Config struct {
 
 func Load() Config {
 	return Config{
-		Port:           getenv("APP_PORT", "8080"),
+		Port:           getenv("APP_PORT", "8090"),
 		Env:            getenv("APP_ENV", "dev"),
 		AllowedOrigins: getenv("ALLOWED_ORIGINS", "*"),
 		LLMProxyURL:    getenv("LLM_PROXY_URL", ""),

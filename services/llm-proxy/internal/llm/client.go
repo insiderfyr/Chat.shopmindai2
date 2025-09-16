@@ -1,21 +1,17 @@
 package llm
 
 import (
-	"bytes"
-	"encoding/json"
+	"context"
 	"fmt"
 	"io"
-	"net/http"
-	"time"
 
-	"github.com/rs/zerolog/log"
-
+	openai "github.com/sashabaranov/go-openai"
 	"github.com/shopmindai/llm-proxy/internal/config"
 )
 
 type Client struct {
 	cfg    config.Config
-	client *http.Client
+	client *openai.Client
 }
 
 type ChatMessage struct {
@@ -23,88 +19,55 @@ type ChatMessage struct {
 	Content string `json:"content"`
 }
 
-type ChatRequest struct {
-	Model       string        `json:"model"`
-	Messages    []ChatMessage `json:"messages"`
-	MaxTokens   int           `json:"max_tokens,omitempty"`
-	Temperature float64       `json:"temperature,omitempty"`
-	Stream      bool          `json:"stream"`
-}
-
-type ChatResponse struct {
-	Choices []struct {
-		Delta struct {
-			Content string `json:"content"`
-		} `json:"delta"`
-		FinishReason string `json:"finish_reason"`
-	} `json:"choices"`
-}
-
 func New(cfg config.Config) *Client {
+	config := openai.DefaultConfig(cfg.LLMAPIKey)
+	if cfg.LLMBaseURL != "" {
+		config.BaseURL = cfg.LLMBaseURL
+	}
+	client := openai.NewClientWithConfig(config)
 	return &Client{
-		cfg: cfg,
-		client: &http.Client{
-			Timeout: 30 * time.Second,
-		},
+		cfg:    cfg,
+		client: client,
 	}
 }
 
 func (c *Client) StreamChat(messages []ChatMessage, writer io.Writer) error {
-	req := ChatRequest{
-		Model:       c.cfg.LLMModel,
-		Messages:    messages,
-		Stream:      true,
-		Temperature: 0.7,
+	// Mapare mesaje la tipul oficial
+	openaiMessages := make([]openai.ChatCompletionMessage, len(messages))
+	for i, msg := range messages {
+		openaiMessages[i] = openai.ChatCompletionMessage{
+			Role:    msg.Role,
+			Content: msg.Content,
+		}
 	}
 
-	reqBody, err := json.Marshal(req)
+	req := openai.ChatCompletionRequest{
+		Model:    c.cfg.LLMModel,
+		Messages: openaiMessages,
+		Stream:   true,
+	}
+
+	stream, err := c.client.CreateChatCompletionStream(context.Background(), req)
 	if err != nil {
-		return fmt.Errorf("failed to marshal request: %w", err)
+		return fmt.Errorf("failed to start chat completion stream: %w", err)
 	}
+	defer stream.Close()
 
-	httpReq, err := http.NewRequest("POST", c.cfg.LLMBaseURL+"/chat/completions", bytes.NewBuffer(reqBody))
-	if err != nil {
-		return fmt.Errorf("failed to create request: %w", err)
-	}
-
-	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set("Authorization", "Bearer "+c.cfg.LLMAPIKey)
-
-	resp, err := c.client.Do(httpReq)
-	if err != nil {
-		return fmt.Errorf("failed to make request: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		body, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("API request failed: %d %s", resp.StatusCode, string(body))
-	}
-
-	// Stream SSE response
-	decoder := json.NewDecoder(resp.Body)
 	for {
-		var chunk ChatResponse
-		if err := decoder.Decode(&chunk); err != nil {
-			if err == io.EOF {
-				break
-			}
-			log.Error().Err(err).Msg("failed to decode chunk")
-			continue
+		response, err := stream.Recv()
+		if err == io.EOF {
+			break
 		}
-
-		if len(chunk.Choices) > 0 {
-			content := chunk.Choices[0].Delta.Content
-			if content != "" {
-				fmt.Fprintf(writer, "data: %s\n\n", content)
-			}
-			
-			if chunk.Choices[0].FinishReason == "stop" {
-				fmt.Fprintf(writer, "data: [DONE]\n\n")
-				break
+		if err != nil {
+			return fmt.Errorf("error reading from stream: %w", err)
+		}
+		if len(response.Choices) > 0 {
+			if content := response.Choices[0].Delta.Content; content != "" {
+				if _, err := fmt.Fprint(writer, content); err != nil {
+					return err
+				}
 			}
 		}
 	}
-
 	return nil
 }
