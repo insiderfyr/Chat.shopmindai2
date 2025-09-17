@@ -1,9 +1,50 @@
 version: "3.9"
 
 services:
+  chat-service:
+    build:
+      context: ./services-new/chat-service
+      dockerfile: Dockerfile
+    container_name: chat-service
+    environment:
+      - APP_PORT=8080
+      - APP_ENV=dev
+      - ALLOWED_ORIGINS=http://localhost:3090
+    ports:
+      - "8080:8080"
+    depends_on:
+      - llm-proxy
+
+  llm-proxy:
+    build:
+      context: ./services-new/llm-proxy
+      dockerfile: Dockerfile
+    container_name: llm-proxy
+    environment:
+      - APP_PORT=9000
+      - APP_ENV=dev
+      - ALLOWED_ORIGINS=http://localhost:8080
+      - LLM_PROVIDER=${LLM_PROVIDER}
+      - LLM_API_KEY=${LLM_API_KEY}
+      - LLM_BASE_URL=${LLM_BASE_URL}
+      - LLM_MODEL=${LLM_MODEL}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE}
+    ports:
+      - "9000:9000"
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+      - "8443:8443"
+      - "8444:8444"
+    volumes:
+      - ./infra/gateway:/usr/local/kong/declarative
+    networks:
+      - app-network
+
   api:
     build:
-      context: ./services/orchestrator
+      context: ./services-new/orchestrator
       dockerfile: Dockerfile
     container_name: orchestrator
     environment:
@@ -15,10 +56,13 @@ services:
       - "3080:3080"
     depends_on:
       - llm-proxy
+      - gateway
+    networks:
+      - app-network
 
   llm-proxy:
     build:
-      context: ./services/llm-proxy
+      context: ./services-new/llm-proxy
       dockerfile: Dockerfile
     container_name: llm-proxy
     environment:
@@ -33,10 +77,12 @@ services:
       - LLM_TEMPERATURE=${LLM_TEMPERATURE}
     ports:
       - "9000:9000"
+    networks:
+      - app-network
 
   chat-service:
     build:
-      context: ./services/chat-service
+      context: ./services-new/chat-service
       dockerfile: Dockerfile
     container_name: chat-service
     environment:
@@ -44,9 +90,12 @@ services:
       - APP_ENV=dev
       - ALLOWED_ORIGINS=*
     ports:
-      - "8080:8080"
+      - "8082:8080"
     depends_on:
       - api
+      - gateway
+    networks:
+      - app-network
 
   web:
     build:
@@ -55,7 +104,14 @@ services:
     container_name: web
     ports:
       - "3000:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
     depends_on:
       - api
+      - gateway
+    networks:
+      - app-network
 
-
+networks:
+  app-network:
+    driver: bridge

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const port = 3080;
+const port = 3090;
 
 // Middleware
 app.use(express.json());
@@ -355,6 +355,20 @@ app.get('/api/auth/config', (req, res) => {
       }
     },
     message: 'Auth configuration for ShopMindAI'
+  });
+});
+
+// Balance endpoint
+app.get('/api/balance', (req, res) => {
+  res.json({
+    balance: 100.0
+  });
+});
+
+// Search enable endpoint
+app.get('/api/search/enable', (req, res) => {
+  res.json({
+    enabled: true
   });
 });
 

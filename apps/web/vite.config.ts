@@ -13,60 +13,8 @@ export default defineConfig(({ command }) => ({
     port: 3090,
     strictPort: true,
     proxy: {
-      // Mock server routes - must come before generic /api route
-      '/api/auth': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-        rewrite: (path) => path.replace(/^\/api\/auth/, '/api/v1/auth'),
-      },
-      '/api/v1/auth': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      '/api/banner': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      '/api/config': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      '/api/user': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      '/oauth': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      // Health and metrics endpoints
-      '/health': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      '/metrics': {
-        target: 'http://localhost:3080',
-        changeOrigin: true,
-        secure: false,
-        ws: true,
-      },
-      // Generic API routes - must come after specific routes
       '/api': {
-        target: 'http://localhost:3080',
+        target: 'http://localhost:3090',
         changeOrigin: true,
         secure: false,
         ws: true,
