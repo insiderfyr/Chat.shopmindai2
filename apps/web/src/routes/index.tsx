@@ -8,7 +8,6 @@ import {
   TwoFactorScreen,
   RequestPasswordReset,
 } from '~/components/Auth';
-import { OAuthSuccess, OAuthError } from '~/components/OAuth';
 import { AuthContextProvider } from '~/hooks/AuthContext';
 import RouteErrorBoundary from './RouteErrorBoundary';
 import StartupLayout from './Layouts/Startup';
@@ -26,20 +25,6 @@ const AuthLayout = () => (
 );
 
 export const router = createBrowserRouter([
-  {
-    path: 'oauth',
-    errorElement: <RouteErrorBoundary />,
-    children: [
-      {
-        path: 'success',
-        element: <OAuthSuccess />,
-      },
-      {
-        path: 'error',
-        element: <OAuthError />,
-      },
-    ],
-  },
   {
     path: '/',
     element: <StartupLayout />,
