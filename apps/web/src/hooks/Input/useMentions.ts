@@ -5,49 +5,21 @@ import {
   alternateName,
   EModelEndpoint,
   PermissionTypes,
-  isAgentsEndpoint,
-  getConfigDefaults,
   isAssistantsEndpoint,
+  getConfigDefaults,
 } from 'librechat-data-provider';
 import type { TAssistantsMap, TEndpointsConfig } from 'librechat-data-provider';
 import type { MentionOption } from '~/common';
 import {
   useGetPresetsQuery,
   useGetEndpointsQuery,
-  useListAgentsQuery,
   useGetStartupConfig,
 } from '~/data-provider';
 import useAssistantListMap from '~/hooks/Assistants/useAssistantListMap';
 import { mapEndpoints, getPresetTitle } from '~/utils';
 import { EndpointIcon } from '~/components/Endpoints';
-import useHasAccess from '~/hooks/Roles/useHasAccess';
 
 const defaultInterface = getConfigDefaults().interface;
-
-const assistantMapFn =
-  ({
-    endpoint,
-    assistantMap,
-    endpointsConfig,
-  }: {
-    endpoint: EModelEndpoint | string;
-    assistantMap: TAssistantsMap;
-    endpointsConfig: TEndpointsConfig;
-  }) =>
-  ({ id, name, description }) => ({
-    type: endpoint,
-    label: name ?? '',
-    value: id,
-    description: description ?? '',
-    icon: EndpointIcon({
-      conversation: { assistant_id: id, endpoint },
-      containerClassName: 'shadow-stroke overflow-hidden rounded-full',
-      endpointsConfig: endpointsConfig,
-      context: 'menu-item',
-      assistantMap,
-      size: 20,
-    }),
-  });
 
 export default function useMentions({
   assistantMap,
@@ -56,11 +28,6 @@ export default function useMentions({
   assistantMap: TAssistantsMap;
   includeAssistants: boolean;
 }) {
-  const hasAgentAccess = useHasAccess({
-    permissionType: PermissionTypes.AGENTS,
-    permission: Permissions.USE,
-  });
-
   const { data: presets } = useGetPresetsQuery();
   const { data: modelsConfig } = useGetModelsQuery();
   const { data: startupConfig } = useGetStartupConfig();
@@ -79,46 +46,41 @@ export default function useMentions({
     () => startupConfig?.interface ?? defaultInterface,
     [startupConfig?.interface],
   );
-  const { data: agentsList = null } = useListAgentsQuery(undefined, {
-    enabled: hasAgentAccess && interfaceConfig.modelSelect === true,
-    select: (res) => {
-      const { data } = res;
-      return data.map(({ id, name, avatar }) => ({
-        value: id,
-        label: name ?? '',
-        type: EModelEndpoint.agents,
-        icon: EndpointIcon({
-          conversation: {
-            agent_id: id,
-            endpoint: EModelEndpoint.agents,
-            iconURL: avatar?.filepath,
-          },
-          containerClassName: 'shadow-stroke overflow-hidden rounded-full',
-          endpointsConfig: endpointsConfig,
-          context: 'menu-item',
-          size: 20,
-        }),
-      }));
-    },
-  });
+
   const assistantListMap = useMemo(
     () => ({
       [EModelEndpoint.assistants]: listMap[EModelEndpoint.assistants]
         ?.map(
-          assistantMapFn({
-            endpoint: EModelEndpoint.assistants,
-            assistantMap,
-            endpointsConfig,
-          }),
+          ({ id, name, description }) => ({
+            type: EModelEndpoint.assistants,
+            label: name ?? '',
+            value: id,
+            description: description ?? '',
+            icon: EndpointIcon({
+              conversation: { assistant_id: id, endpoint: EModelEndpoint.assistants },
+              containerClassName: 'shadow-stroke overflow-hidden rounded-full',
+              endpointsConfig: endpointsConfig,
+              context: 'menu-item',
+              size: 20,
+            }),
+          })
         )
         .filter(Boolean),
       [EModelEndpoint.azureAssistants]: listMap[EModelEndpoint.azureAssistants]
         ?.map(
-          assistantMapFn({
-            endpoint: EModelEndpoint.azureAssistants,
-            assistantMap,
-            endpointsConfig,
-          }),
+          ({ id, name, description }) => ({
+            type: EModelEndpoint.azureAssistants,
+            label: name ?? '',
+            value: id,
+            description: description ?? '',
+            icon: EndpointIcon({
+              conversation: { assistant_id: id, endpoint: EModelEndpoint.azureAssistants },
+              containerClassName: 'shadow-stroke overflow-hidden rounded-full',
+              endpointsConfig: endpointsConfig,
+              context: 'menu-item',
+              size: 20,
+            }),
+          })
         )
         .filter(Boolean),
     }),
@@ -134,7 +96,7 @@ export default function useMentions({
     }
 
     const modelOptions = validEndpoints.flatMap((endpoint) => {
-      if (isAssistantsEndpoint(endpoint) || isAgentsEndpoint(endpoint)) {
+      if (isAssistantsEndpoint(endpoint)) {
         return [];
       }
 
@@ -183,17 +145,6 @@ export default function useMentions({
           size: 20,
         }),
       })),
-      ...(interfaceConfig.modelSelect === true ? (agentsList ?? []) : []),
-      ...(endpointsConfig?.[EModelEndpoint.assistants] &&
-      includeAssistants &&
-      interfaceConfig.modelSelect === true
-        ? assistantListMap[EModelEndpoint.assistants] || []
-        : []),
-      ...(endpointsConfig?.[EModelEndpoint.azureAssistants] &&
-      includeAssistants &&
-      interfaceConfig.modelSelect === true
-        ? assistantListMap[EModelEndpoint.azureAssistants] || []
-        : []),
       ...((interfaceConfig.modelSelect === true && interfaceConfig.presets === true
         ? presets
         : []
@@ -219,7 +170,6 @@ export default function useMentions({
     presets,
     endpoints,
     modelSpecs,
-    agentsList,
     assistantMap,
     modelsConfig,
     endpointsConfig,
@@ -233,7 +183,6 @@ export default function useMentions({
     options,
     presets,
     modelSpecs,
-    agentsList,
     modelsConfig,
     endpointsConfig,
     assistantListMap,

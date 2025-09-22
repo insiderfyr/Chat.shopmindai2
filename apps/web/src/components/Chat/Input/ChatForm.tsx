@@ -1,7 +1,7 @@
 import { memo, useRef, useMemo, useEffect, useState, useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { Constants, isAssistantsEndpoint, isAgentsEndpoint } from 'librechat-data-provider';
+import { Constants, isAssistantsEndpoint } from 'librechat-data-provider';
 import {
   useChatContext,
   useChatFormContext,
@@ -80,8 +80,6 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
     setConversation: setAddedConvo,
     isSubmitting: isSubmittingAdded,
   } = useAddedChatContext();
-  const assistantMap = useAssistantsMapContext();
-  const showStopAdded = useRecoilValue(store.showStopButtonByIndex(addedIndex));
 
   const endpoint = useMemo(
     () => conversation?.endpointType ?? conversation?.endpoint,
@@ -96,17 +94,8 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
     () => (chatDirection != null ? chatDirection?.toLowerCase() === 'rtl' : false),
     [chatDirection],
   );
-  const invalidAssistant = useMemo(
-    () =>
-      isAssistantsEndpoint(endpoint) &&
-      (!(conversation?.assistant_id ?? '') ||
-        !assistantMap?.[endpoint ?? '']?.[conversation?.assistant_id ?? '']),
-    [conversation?.assistant_id, endpoint, assistantMap],
-  );
-  const disableInputs = useMemo(
-    () => requiresKey || invalidAssistant,
-    [requiresKey, invalidAssistant],
-  );
+
+  const disableInputs = useMemo(() => requiresKey, [requiresKey]);
 
   const handleContainerClick = useCallback(() => {
     /** Check if the device is a touchscreen */
@@ -317,7 +306,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
               )}
             >
               <BadgeRow
-                showEphemeralBadges={!isAgentsEndpoint(endpoint) && !isAssistantsEndpoint(endpoint)}
+                showEphemeralBadges={!isAssistantsEndpoint(endpoint)}
                 isSubmitting={isSubmitting || isSubmittingAdded}
                 conversationId={conversationId}
                 onChange={setBadges}

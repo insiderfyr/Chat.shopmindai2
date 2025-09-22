@@ -3,13 +3,11 @@ import { EModelEndpoint } from 'librechat-data-provider';
 import { useChatContext } from '~/Providers';
 import { useGetEndpointsQuery, useGetStartupConfig } from '~/data-provider';
 import { useLocalize, useAuthContext } from '~/hooks';
-import { getIconEndpoint, getEntity } from '~/utils';
+import { getIconEndpoint } from '~/utils';
 import LogoIcon from '~/components/svg/LogoIcon';
 
 export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: boolean }) {
   const { conversation } = useChatContext();
-  const agentsMap = useAgentsMapContext();
-  const assistantMap = useAssistantsMapContext();
   const { data: startupConfig } = useGetStartupConfig();
   const { data: endpointsConfig } = useGetEndpointsQuery();
   const { user } = useAuthContext();
@@ -33,22 +31,17 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
     });
   }, [conversation?.endpoint, conversation?.iconURL, endpointsConfig]);
 
-  const { entity, isAgent, isAssistant } = getEntity({
-    endpoint: endpointType,
-    agentsMap,
-    assistantMap,
-    agent_id: conversation?.agent_id,
-    assistant_id: conversation?.assistant_id,
-  });
-
-  const description = (entity?.description || conversation?.greeting) ?? '';
+  // Eliminat agentsMap și assistantMap
+  const description = conversation?.greeting ?? '';
 
   return (
     <div
-      className={`-mt-32 flex h-full transform-gpu flex-col items-center justify-center pb-20 transition-all duration-200 ${centerFormOnLanding ? 'max-h-full sm:max-h-0' : 'max-h-full'}`}
+      className={`-mt-32 flex h-full transform-gpu flex-col items-center justify-center pb-20 transition-all duration-200 ${
+        centerFormOnLanding ? 'max-h-full sm:max-h-0' : 'max-h-full'
+      }`}
     >
       <div className="flex flex-col items-center gap-0 p-1">
-        {/* Logo + ShopMindAI - exact ca în pagina de login */}
+        {/* Logo + ShopMindAI */}
         <div className="flex items-center justify-center gap-3">
           <LogoIcon size={48} className="text-[#4d8eff]" />
           <h1 className="text-3xl font-bold text-foreground">

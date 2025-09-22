@@ -33,8 +33,6 @@ const ConversationStarters = () => {
 
   const { entity, isAgent } = getEntity({
     endpoint: endpointType,
-    agentsMap,
-    assistantMap,
     agent_id: conversation?.agent_id,
     assistant_id: conversation?.assistant_id,
   });

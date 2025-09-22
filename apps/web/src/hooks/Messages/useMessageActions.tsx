@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useUpdateFeedbackMutation } from 'librechat-data-provider/react-query';
 import {
   isAssistantsEndpoint,
@@ -50,9 +51,6 @@ export default function useMessageActions(props: TMessageActions) {
     [isMultiMessage, addedConvo, rootConvo],
   );
 
-  const agentsMap = useAgentsMapContext();
-  const assistantMap = useAssistantsMapContext();
-
   const { text, content, messageId = null, isCreatedByUser } = message ?? {};
   const edit = useMemo(() => messageId === currentEditId, [messageId, currentEditId]);
 
@@ -73,37 +71,7 @@ export default function useMessageActions(props: TMessageActions) {
     [messageId, setCurrentEditId],
   );
 
-  const assistant = useMemo(() => {
-    if (!isAssistantsEndpoint(conversation?.endpoint)) {
-      return undefined;
-    }
-
-    const endpointKey = conversation?.endpoint ?? '';
-    const modelKey = message?.model ?? '';
-
-    return assistantMap?.[endpointKey] ? assistantMap[endpointKey][modelKey] : undefined;
-  }, [conversation?.endpoint, message?.model, assistantMap]);
-
-  const agent = useMemo(() => {
-    if (!isAgentsEndpoint(conversation?.endpoint)) {
-      return undefined;
-    }
-
-    if (!agentsMap) {
-      return undefined;
-    }
-
-    const modelKey = message?.model ?? '';
-    if (modelKey) {
-      return agentsMap[modelKey];
-    }
-
-    const agentId = conversation?.agent_id ?? '';
-    if (agentId) {
-      return agentsMap[agentId];
-    }
-  }, [agentsMap, conversation?.agent_id, conversation?.endpoint, message?.model]);
-
+  // Eliminăm logica referitoare la assistantMap și agentsMap
   const isSubmitting = useMemo(
     () => (isMultiMessage === true ? isSubmittingAdditional : isSubmittingRoot),
     [isMultiMessage, isSubmittingAdditional, isSubmittingRoot],
@@ -122,14 +90,10 @@ export default function useMessageActions(props: TMessageActions) {
   const messageLabel = useMemo(() => {
     if (message?.isCreatedByUser === true) {
       return UsernameDisplay ? (user?.name ?? '') || user?.username : localize('com_user_message');
-    } else if (agent) {
-      return agent.name ?? 'Assistant';
-    } else if (assistant) {
-      return assistant.name ?? 'Assistant';
     } else {
       return message?.sender;
     }
-  }, [message, agent, assistant, UsernameDisplay, user, localize]);
+  }, [message, UsernameDisplay, user, localize]);
 
   const feedbackMutation = useUpdateFeedbackMutation(
     conversation?.conversationId || '',
@@ -167,9 +131,6 @@ export default function useMessageActions(props: TMessageActions) {
     ask,
     edit,
     index,
-    agent,
-    assistant,
-    enterEdit,
     conversation,
     messageLabel,
     isSubmitting,

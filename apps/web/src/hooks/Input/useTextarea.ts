@@ -1,13 +1,10 @@
 import debounce from 'lodash/debounce';
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import type { TEndpointOption } from 'librechat-data-provider';
 import type { KeyboardEvent } from 'react';
 import {
   forceResize,
   insertTextAtCursor,
-  getEntityName,
-  getEntity,
   checkIfScrollable,
 } from '~/utils';
 import useGetSender from '~/hooks/Conversations/useGetSender';
@@ -34,9 +31,7 @@ export default function useTextarea({
   const localize = useLocalize();
   const getSender = useGetSender();
   const isComposing = useRef(false);
-  const agentsMap = useAgentsMapContext();
   const { handleFiles } = useFileHandling();
-  const assistantMap = useAssistantsMapContext();
   const checkHealth = useInteractionHealthCheck();
   const enterToSend = useRecoilValue(store.enterToSend);
 
@@ -44,21 +39,10 @@ export default function useTextarea({
     useChatContext();
   const [activePrompt, setActivePrompt] = useRecoilState(store.activePromptByIndex(index));
 
-  const { endpoint = '' } = conversation || {};
-  const { entity, isAgent, isAssistant } = getEntity({
-    endpoint,
-    agentsMap,
-    assistantMap,
-    agent_id: conversation?.agent_id,
-    assistant_id: conversation?.assistant_id,
-  });
-  const entityName = entity?.name ?? '';
-
   const isNotAppendable =
-    (((latestMessage?.unfinished ?? false) && !isSubmitting) || (latestMessage?.error ?? false)) &&
-    !isAssistant;
-  // && (conversationId?.length ?? 0) > 6; // also ensures that we don't show the wrong placeholder
+    (((latestMessage?.unfinished ?? false) && !isSubmitting) || (latestMessage?.error ?? false));
 
+  // Inserare prompt în textarea
   useEffect(() => {
     const prompt = activePrompt ?? '';
     if (prompt && textAreaRef.current) {
@@ -68,10 +52,8 @@ export default function useTextarea({
     }
   }, [activePrompt, setActivePrompt, textAreaRef]);
 
-  // State for dynamic placeholder rotation
+  // Placeholder-uri dinamice pentru e-commerce
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-
-  // E-commerce messages array - optimized for 15s loop
   const ecommerceMessages = [
     'What are you looking for today?',
     'Describe your perfect product',
@@ -85,45 +67,31 @@ export default function useTextarea({
     "I'm your personal shopping assistant",
   ];
 
-  // Effect for rotating messages every 15 seconds - UNIVERSAL timing
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % ecommerceMessages.length);
-    }, 15000); // Rotation every 15 seconds - UNIVERSAL timing
-
+    }, 15000);
     return () => clearInterval(interval);
   }, [ecommerceMessages.length]);
 
+  // Actualizare placeholder
   useEffect(() => {
     const currentValue = textAreaRef.current?.value ?? '';
-    if (currentValue) {
-      return;
-    }
+    if (currentValue) return;
 
     const getPlaceholderText = () => {
-      if (disabled) {
-        return localize('com_endpoint_config_placeholder');
-      }
-
-      if (isNotAppendable) {
-        return localize('com_endpoint_message_not_appendable');
-      }
-
-      // UNIVERSAL: Always return rotating e-commerce messages
+      if (disabled) return localize('com_endpoint_config_placeholder');
+      if (isNotAppendable) return localize('com_endpoint_message_not_appendable');
       return ecommerceMessages[currentMessageIndex];
     };
 
     const placeholder = getPlaceholderText();
-
-    if (textAreaRef.current?.getAttribute('placeholder') === placeholder) {
-      return;
-    }
+    if (textAreaRef.current?.getAttribute('placeholder') === placeholder) return;
 
     const setPlaceholder = () => {
-      const placeholder = getPlaceholderText();
-
-      if (textAreaRef.current?.getAttribute('placeholder') !== placeholder) {
-        textAreaRef.current?.setAttribute('placeholder', placeholder);
+      const newPlaceholder = getPlaceholderText();
+      if (textAreaRef.current?.getAttribute('placeholder') !== newPlaceholder) {
+        textAreaRef.current?.setAttribute('placeholder', newPlaceholder);
         forceResize(textAreaRef.current);
       }
     };
@@ -132,32 +100,20 @@ export default function useTextarea({
     debouncedSetPlaceholder();
 
     return () => debouncedSetPlaceholder.cancel();
-  }, [
-    localize,
-    disabled,
-    textAreaRef,
-    latestMessage,
-    isNotAppendable,
-    currentMessageIndex,
-    ecommerceMessages,
-  ]);
+  }, [localize, disabled, textAreaRef, latestMessage, isNotAppendable, currentMessageIndex, ecommerceMessages]);
 
+  // Key handlers
   const handleKeyDown = useCallback(
     (e: KeyEvent) => {
       if (textAreaRef.current && checkIfScrollable(textAreaRef.current)) {
-        const scrollable = checkIfScrollable(textAreaRef.current);
-        scrollable && setIsScrollable(scrollable);
+        setIsScrollable(true);
       }
-      if (e.key === 'Enter' && isSubmitting) {
-        return;
-      }
+      if (e.key === 'Enter' && isSubmitting) return;
 
       checkHealth();
 
       const isNonShiftEnter = e.key === 'Enter' && !e.shiftKey;
       const isCtrlEnter = e.key === 'Enter' && (e.ctrlKey || e.metaKey);
-
-      // NOTE: isComposing and e.key behave differently in Safari compared to other browsers, forcing us to use e.keyCode instead
       const isComposingInput = isComposing.current || e.key === 'Process' || e.keyCode === 229;
 
       if (isNonShiftEnter && filesLoading) {
@@ -184,21 +140,12 @@ export default function useTextarea({
       if ((isNonShiftEnter || isCtrlEnter) && !isComposingInput) {
         const globalAudio = document.getElementById(globalAudioId) as HTMLAudioElement | undefined;
         if (globalAudio) {
-          console.log('Unmuting global audio');
           globalAudio.muted = false;
         }
         submitButtonRef.current?.click();
       }
     },
-    [
-      isSubmitting,
-      checkHealth,
-      filesLoading,
-      enterToSend,
-      setIsScrollable,
-      textAreaRef,
-      submitButtonRef,
-    ],
+    [isSubmitting, checkHealth, filesLoading, enterToSend, setIsScrollable, textAreaRef, submitButtonRef],
   );
 
   const handleCompositionStart = () => {
@@ -212,14 +159,10 @@ export default function useTextarea({
   const handlePaste = useCallback(
     (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
       const textArea = textAreaRef.current;
-      if (!textArea) {
-        return;
-      }
+      if (!textArea) return;
 
       const clipboardData = e.clipboardData as DataTransfer | undefined;
-      if (!clipboardData) {
-        return;
-      }
+      if (!clipboardData) return;
 
       if (clipboardData.files.length > 0) {
         setFilesLoading(true);
