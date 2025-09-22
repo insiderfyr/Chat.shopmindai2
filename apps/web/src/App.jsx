@@ -3,7 +3,6 @@ import { DndProvider } from 'react-dnd';
 import { RouterProvider } from 'react-router-dom';
 import * as RadixToast from '@radix-ui/react-toast';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-//import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider, QueryCache } from '@tanstack/react-query';
 import { ThemeProvider, useApiErrorBoundary } from './hooks';
 import { ToastProvider } from './Providers';
@@ -27,7 +26,6 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
-        <LiveAnnouncer>
           <ThemeProvider>
             <RadixToast.Provider>
               <ToastProvider>
@@ -40,7 +38,6 @@ const App = () => {
               </ToastProvider>
             </RadixToast.Provider>
           </ThemeProvider>
-        </LiveAnnouncer>
       </RecoilRoot>
     </QueryClientProvider>
   );

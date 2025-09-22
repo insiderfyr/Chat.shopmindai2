@@ -14,7 +14,6 @@ export * from './DashboardContext';
 export * from './AssistantsContext';
 export * from './AssistantsMapContext';
 export * from './AgentsMapContext';
-export * from './AnnouncerContext';
 
 export * from './ArtifactContext';
 export * from './CodeBlockContext';

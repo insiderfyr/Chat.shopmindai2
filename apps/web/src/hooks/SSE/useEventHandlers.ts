@@ -34,7 +34,6 @@ import store, { useApplyNewAgentTemplate } from '~/store';
 import useStepHandler from '~/hooks/SSE/useStepHandler';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { MESSAGE_UPDATE_INTERVAL } from '~/common';
-import { useLiveAnnouncer } from '~/Providers';
 
 type TSyncData = {
   sync: boolean;
