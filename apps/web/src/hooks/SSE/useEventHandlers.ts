@@ -169,7 +169,6 @@ export default function useEventHandlers({
   resetLatestMessage,
 }: EventHandlerParams) {
   const queryClient = useQueryClient();
-  const { announcePolite } = useLiveAnnouncer();
   const applyAgentTemplate = useApplyNewAgentTemplate();
   const setAbortScroll = useSetRecoilState(store.abortScroll);
   const navigate = useNavigate();
@@ -183,7 +182,6 @@ export default function useEventHandlers({
   const stepHandler = useStepHandler({
     setMessages,
     getMessages,
-    announcePolite,
     setIsSubmitting,
     lastAnnouncementTimeRef,
   });
@@ -203,10 +201,6 @@ export default function useEventHandlers({
       setIsSubmitting(true);
 
       const currentTime = Date.now();
-      if (currentTime - lastAnnouncementTimeRef.current > MESSAGE_UPDATE_INTERVAL) {
-        announcePolite({ message: 'composing', isStatus: true });
-        lastAnnouncementTimeRef.current = currentTime;
-      }
 
       if (isRegenerate) {
         setMessages([
@@ -231,7 +225,7 @@ export default function useEventHandlers({
         ]);
       }
     },
-    [setMessages, announcePolite, setIsSubmitting],
+    [setMessages, setIsSubmitting],
   );
 
   const cancelHandler = useCallback(
@@ -293,10 +287,6 @@ export default function useEventHandlers({
         },
       ]);
 
-      announcePolite({
-        message: 'start',
-        isStatus: true,
-      });
 
       let update = {} as TConversation;
       if (setConversation && !isAddedRequest) {
@@ -344,7 +334,6 @@ export default function useEventHandlers({
       queryClient,
       setMessages,
       isAddedRequest,
-      announcePolite,
       setConversation,
       setShowStopButton,
       resetLatestMessage,
@@ -367,10 +356,6 @@ export default function useEventHandlers({
 
       const { conversationId, parentMessageId } = userMessage;
       lastAnnouncementTimeRef.current = Date.now();
-      announcePolite({
-        message: 'start',
-        isStatus: true,
-      });
 
       let update = {} as TConversation;
       if (setConversation && !isAddedRequest) {
@@ -425,7 +410,6 @@ export default function useEventHandlers({
       queryClient,
       setAbortScroll,
       isAddedRequest,
-      announcePolite,
       setConversation,
       resetLatestMessage,
       applyAgentTemplate,
@@ -453,9 +437,6 @@ export default function useEventHandlers({
       }
 
       /* a11y announcements */
-      announcePolite({ message: 'end', isStatus: true });
-      announcePolite({ message: getAllContentText(responseMessage) });
-
       /* Update messages; if assistants endpoint, client doesn't receive responseMessage */
       let finalMessages: TMessage[] = [];
       if (runMessages) {
@@ -541,7 +522,6 @@ export default function useEventHandlers({
       queryClient,
       setCompleted,
       isAddedRequest,
-      announcePolite,
       setConversation,
       setIsSubmitting,
       setShowStopButton,

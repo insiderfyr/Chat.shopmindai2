@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider, QueryCache } from '@tanstack/react-qu
 import { ThemeProvider, useApiErrorBoundary } from './hooks';
 import { ToastProvider } from './Providers';
 import Toast from './components/ui/Toast';
-import { LiveAnnouncer } from '~/a11y';
 import { router } from './routes';
 
 const App = () => {
