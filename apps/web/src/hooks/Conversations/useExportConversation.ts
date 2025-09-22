@@ -16,7 +16,6 @@ import type {
   TMessageContentParts,
 } from 'librechat-data-provider';
 import useBuildMessageTree from '~/hooks/Messages/useBuildMessageTree';
-import { useScreenshot } from '~/hooks/ScreenshotContext';
 import { cleanupPreset, buildTree } from '~/utils';
 import { useParams } from 'react-router-dom';
 
