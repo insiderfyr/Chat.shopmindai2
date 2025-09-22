@@ -6,7 +6,6 @@ import {
   useChatContext,
   useChatFormContext,
   useAddedChatContext,
-  useAssistantsMapContext,
 } from '~/Providers';
 import {
   useTextarea,

@@ -3,21 +3,16 @@ import { Outlet } from 'react-router-dom';
 import type { ContextType } from '~/common';
 import {
   useAuthContext,
-  useAssistantsMap,
-  useAgentsMap,
   useFileMap,
   useSearchEnabled,
 } from '~/hooks';
 import {
-  AgentsMapContext,
-  AssistantsMapContext,
   FileMapContext,
   SetConvoProvider,
 } from '~/Providers';
 import TermsAndConditionsModal from '~/components/ui/TermsAndConditionsModal';
-import { useUserTermsQuery, useGetStartupConfig } from '~/data-provider';
+import { useUserTermsQuery, useGetStartupConfig, useHealthCheck } from '~/data-provider';
 import { Nav } from '~/components/Nav';
-import { useHealthCheck } from '~/data-provider';
 
 export default function Root() {
   const [showTerms, setShowTerms] = useState(false);
@@ -31,8 +26,6 @@ export default function Root() {
   // Global health check - runs once per authenticated session
   useHealthCheck(isAuthenticated);
 
-  const assistantsMap = useAssistantsMap({ isAuthenticated });
-  const agentsMap = useAgentsMap({ isAuthenticated });
   const fileMap = useFileMap({ isAuthenticated });
 
   const { data: config } = useGetStartupConfig();
@@ -64,28 +57,24 @@ export default function Root() {
   return (
     <SetConvoProvider>
       <FileMapContext.Provider value={fileMap}>
-        <AssistantsMapContext.Provider value={assistantsMap}>
-          <AgentsMapContext.Provider value={agentsMap}>
-            <div className="flex h-full">
-              <div className="relative z-0 flex h-full w-full overflow-hidden">
-                <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
-                <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
-                  <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
-                </div>
-              </div>
+        <div className="flex h-full">
+          <div className="relative z-0 flex h-full w-full overflow-hidden">
+            <Nav navVisible={navVisible} setNavVisible={setNavVisible} />
+            <div className="relative flex h-full max-w-full flex-1 flex-col overflow-hidden">
+              <Outlet context={{ navVisible, setNavVisible } satisfies ContextType} />
             </div>
-          </AgentsMapContext.Provider>
-          {config?.interface?.termsOfService?.modalAcceptance === true && (
-            <TermsAndConditionsModal
-              open={showTerms}
-              onOpenChange={setShowTerms}
-              onAccept={handleAcceptTerms}
-              onDecline={handleDeclineTerms}
-              title={config.interface.termsOfService.modalTitle}
-              modalContent={config.interface.termsOfService.modalContent}
-            />
-          )}
-        </AssistantsMapContext.Provider>
+          </div>
+        </div>
+        {config?.interface?.termsOfService?.modalAcceptance === true && (
+          <TermsAndConditionsModal
+            open={showTerms}
+            onOpenChange={setShowTerms}
+            onAccept={handleAcceptTerms}
+            onDecline={handleDeclineTerms}
+            title={config.interface.termsOfService.modalTitle}
+            modalContent={config.interface.termsOfService.modalContent}
+          />
+        )}
       </FileMapContext.Provider>
     </SetConvoProvider>
   );

@@ -4,7 +4,7 @@ import React, { useRef, useState, useMemo } from 'react';
 import { FileSearch, ImageUpIcon, TerminalSquareIcon, FileType2Icon } from 'lucide-react';
 import { EToolResources, EModelEndpoint, defaultAgentCapabilities } from 'librechat-data-provider';
 import type { EndpointFileConfig } from 'librechat-data-provider';
-import { useLocalize, useGetAgentsConfig, useFileHandling, useAgentCapabilities } from '~/hooks';
+import { useLocalize, useFileHandling } from '~/hooks';
 import { FileUpload, TooltipAnchor, DropdownPopup, AttachmentIcon } from '~/components';
 import { ephemeralAgentByConvoId } from '~/store';
 import { cn } from '~/utils';

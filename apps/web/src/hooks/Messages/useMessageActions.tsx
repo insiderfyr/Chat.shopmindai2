@@ -14,8 +14,6 @@ import type { TMessageProps } from '~/common';
 import {
   useChatContext,
   useAddedChatContext,
-  useAssistantsMapContext,
-  useAgentsMapContext,
 } from '~/Providers';
 import useCopyToClipboard from './useCopyToClipboard';
 import { useAuthContext } from '~/hooks/AuthContext';

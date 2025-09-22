@@ -10,8 +10,6 @@ import {
   getEntity,
   checkIfScrollable,
 } from '~/utils';
-import { useAssistantsMapContext } from '~/Providers/AssistantsMapContext';
-import { useAgentsMapContext } from '~/Providers/AgentsMapContext';
 import useGetSender from '~/hooks/Conversations/useGetSender';
 import useFileHandling from '~/hooks/Files/useFileHandling';
 import { useInteractionHealthCheck } from '~/data-provider';

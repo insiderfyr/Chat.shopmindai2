@@ -12,8 +12,7 @@ export * from './ChatFormContext';
 export * from './MessageContext';
 export * from './DashboardContext';
 export * from './AssistantsContext';
-export * from './AssistantsMapContext';
-export * from './AgentsMapContext';
+
 
 export * from './ArtifactContext';
 export * from './CodeBlockContext';
