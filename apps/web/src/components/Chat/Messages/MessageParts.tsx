@@ -38,7 +38,6 @@ export default function Message(props: TMessageProps) {
   const {
     edit,
     index,
-    agent,
     isLast,
     enterEdit,
     assistant,
@@ -67,12 +66,10 @@ export default function Message(props: TMessageProps) {
       result = localize('com_user_message');
     } else if (assistant) {
       result = assistant.name ?? localize('com_ui_assistant');
-    } else if (agent) {
-      result = agent.name ?? localize('com_ui_agent');
     }
 
     return result;
-  }, [assistant, agent, isCreatedByUser, localize]);
+  }, [assistant, isCreatedByUser, localize]);
 
   const baseClasses = useMemo(
     () => ({

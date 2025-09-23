@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { SettingsIcon } from 'lucide-react';
-import { EModelEndpoint, isAgentsEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
+import { EModelEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
 import type { Endpoint } from '~/common';
 import { CustomMenu as Menu, CustomMenuItem as MenuItem } from '../CustomMenu';
 import { useModelSelectorContext } from '../ModelSelectorContext';
@@ -55,7 +55,6 @@ const SettingsButton = ({
 export function EndpointItem({ endpoint }: EndpointItemProps) {
   const localize = useLocalize();
   const {
-    agentsMap,
     assistantsMap,
     selectedValues,
     handleOpenKeyDialog,
@@ -105,12 +104,11 @@ export function EndpointItem({ endpoint }: EndpointItemProps) {
           endpoint,
           (endpoint.models || []).map((model) => model.name),
           searchValue,
-          agentsMap,
           assistantsMap,
         )
       : null;
     const placeholder =
-      isAgentsEndpoint(endpoint.value) || isAssistantsEndpoint(endpoint.value)
+      isAssistantsEndpoint(endpoint.value)
         ? localize('com_endpoint_search_var', { 0: endpoint.label })
         : localize('com_endpoint_search_endpoint_models', { 0: endpoint.label });
     return (

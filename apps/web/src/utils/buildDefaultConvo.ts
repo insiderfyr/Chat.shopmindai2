@@ -1,9 +1,4 @@
-import {
-  parseConvo,
-  EModelEndpoint,
-  isAssistantsEndpoint,
-  isAgentsEndpoint,
-} from 'librechat-data-provider';
+import { parseConvo, EModelEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
 import type { TConversation, EndpointSchemaKey } from 'librechat-data-provider';
 import { getLocalStorageItems } from './localStorage';
 
@@ -33,7 +28,7 @@ const buildDefaultConvo = ({
   const model = lastConversationSetup?.model ?? lastSelectedModel?.[endpoint] ?? '';
   const secondaryModel: string | null =
     endpoint === EModelEndpoint.gptPlugins
-      ? (lastConversationSetup?.agentOptions?.model ?? lastSelectedModel?.secondaryModel ?? null)
+      ? (lastConversationSetup?.model ?? lastSelectedModel?.secondaryModel ?? null)
       : null;
 
   let possibleModels: string[], secondaryModels: string[];
@@ -83,13 +78,6 @@ const buildDefaultConvo = ({
   const defaultAssistantId = lastConversationSetup?.assistant_id ?? '';
   if (isAssistantsEndpoint(endpoint) && !defaultAssistantId && assistantId) {
     defaultConvo.assistant_id = assistantId;
-  }
-
-  // Ensures agent_id is always defined
-  const agentId = convo?.agent_id ?? '';
-  const defaultAgentId = lastConversationSetup?.agent_id ?? '';
-  if (isAgentsEndpoint(endpoint) && !defaultAgentId && agentId) {
-    defaultConvo.agent_id = agentId;
   }
 
   defaultConvo.tools = lastConversationSetup?.tools ?? lastSelectedTools ?? defaultConvo.tools;

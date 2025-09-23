@@ -1,18 +1,16 @@
 import { useMemo } from 'react';
-import type { TMessage, Assistant, Agent } from 'librechat-data-provider';
+import type { TMessage, Assistant } from 'librechat-data-provider';
 import type { TMessageProps } from '~/common';
 import MessageEndpointIcon from '../Endpoints/MessageEndpointIcon';
-import { icons } from '~/hooks/Endpoint/Icons';
 import { getIconEndpoint } from '~/utils';
 import { UserIcon } from '../svg';
 
 export default function MessageIcon(
   props: Pick<TMessageProps, 'message' | 'conversation'> & {
     assistant?: false | Assistant;
-    agent?: false | Agent;
   },
 ) {
-  const { message, conversation, assistant, agent } = props;
+  const { message, conversation, assistant } = props;
 
   const messageSettings = useMemo(
     () => ({
@@ -28,41 +26,15 @@ export default function MessageIcon(
   const iconURL = messageSettings.iconURL ?? '';
   let endpoint = messageSettings.endpoint;
   endpoint = getIconEndpoint({ endpointsConfig: undefined, iconURL, endpoint });
-  const assistantName = (assistant ? assistant.name : '') ?? '';
-  const assistantAvatar = (assistant ? assistant.metadata?.avatar : '') ?? '';
-  const agentName = (agent ? agent.name : '') ?? '';
-  const agentAvatar = (agent ? agent?.avatar?.filepath : '') ?? '';
+  const assistantName = assistant?.name ?? '';
+  const assistantAvatar = assistant?.metadata?.avatar ?? '';
+
   const avatarURL = useMemo(() => {
-    let result = '';
     if (assistant) {
-      result = assistantAvatar;
-    } else if (agent) {
-      result = agentAvatar;
+      return assistantAvatar;
     }
-    return result;
-  }, [assistant, agent, assistantAvatar, agentAvatar]);
-  console.log('MessageIcon', {
-    endpoint,
-    iconURL,
-    assistantName,
-    assistantAvatar,
-    agentName,
-    agentAvatar,
-  });
-  if (message?.isCreatedByUser !== true && agent) {
-    return (
-      <div className="icon-md">
-        {icons.agents && (
-          <icons.agents
-            size={28.8}
-            className="h-2/3 w-2/3"
-            agentName={agentName}
-            avatar={agentAvatar}
-          />
-        )}
-      </div>
-    );
-  }
+    return '';
+  }, [assistant, assistantAvatar]);
 
   if (message?.isCreatedByUser === true) {
     return (
@@ -87,7 +59,6 @@ export default function MessageIcon(
       iconURL={avatarURL}
       model={message?.model ?? conversation?.model}
       assistantName={assistantName}
-      agentName={agentName}
       size={28.8}
     />
   );

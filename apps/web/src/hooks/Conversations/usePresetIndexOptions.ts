@@ -101,20 +101,6 @@ const usePresetIndexOptions: TUsePresetOptions = (_preset) => {
     );
   };
 
-  const setAgentOption: TSetOption = (param) => (newValue) => {
-    const editablePreset = JSON.parse(JSON.stringify(_preset));
-    const { agentOptions } = editablePreset;
-    agentOptions[param] = newValue;
-    setPreset((prevState) =>
-      cleanupPreset({
-        preset: {
-          ...prevState,
-          agentOptions,
-        },
-      }),
-    );
-  };
-
   function checkPluginSelection(value: string) {
     if (!preset?.tools) {
       return false;
@@ -171,7 +157,6 @@ const usePresetIndexOptions: TUsePresetOptions = (_preset) => {
     removeExample,
     getConversation,
     checkPluginSelection,
-    setAgentOption,
     setTools,
   };
 };

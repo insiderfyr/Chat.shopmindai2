@@ -30,7 +30,7 @@ import {
 } from '~/utils';
 import useAttachmentHandler from '~/hooks/SSE/useAttachmentHandler';
 import useContentHandler from '~/hooks/SSE/useContentHandler';
-import store, { useApplyNewAgentTemplate } from '~/store';
+import store from '~/store';
 import useStepHandler from '~/hooks/SSE/useStepHandler';
 import { useAuthContext } from '~/hooks/AuthContext';
 import { MESSAGE_UPDATE_INTERVAL } from '~/common';
@@ -169,7 +169,6 @@ export default function useEventHandlers({
   resetLatestMessage,
 }: EventHandlerParams) {
   const queryClient = useQueryClient();
-  const applyAgentTemplate = useApplyNewAgentTemplate();
   const setAbortScroll = useSetRecoilState(store.abortScroll);
   const navigate = useNavigate();
   const location = useLocation();
@@ -392,14 +391,6 @@ export default function useEventHandlers({
         });
       }
 
-      if (conversationId) {
-        applyAgentTemplate(
-          conversationId,
-          submission.conversation.conversationId,
-          submission.ephemeralAgent,
-        );
-      }
-
       if (resetLatestMessage) {
         resetLatestMessage();
       }
@@ -412,7 +403,6 @@ export default function useEventHandlers({
       isAddedRequest,
       setConversation,
       resetLatestMessage,
-      applyAgentTemplate,
     ],
   );
 
@@ -499,14 +489,6 @@ export default function useEventHandlers({
           return update;
         });
 
-        if (conversation.conversationId && submission.ephemeralAgent) {
-          applyAgentTemplate(
-            conversation.conversationId,
-            submissionConvo.conversationId,
-            submission.ephemeralAgent,
-          );
-        }
-
         if (location.pathname === '/c/new') {
           navigate(`/c/${conversation.conversationId}`, { replace: true });
         }
@@ -526,7 +508,6 @@ export default function useEventHandlers({
       setIsSubmitting,
       setShowStopButton,
       location.pathname,
-      applyAgentTemplate,
     ],
   );
 

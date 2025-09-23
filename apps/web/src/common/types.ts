@@ -62,12 +62,6 @@ export type AssistantListItem = {
   model: string;
 };
 
-export type AgentListItem = {
-  id: string;
-  name: string;
-  avatar: t.Agent['avatar'];
-};
-
 export type TPluginMap = Record<string, t.TPlugin>;
 
 export type GenericSetter<T> = (value: T | ((currentValue: T) => T)) => void;
@@ -98,22 +92,14 @@ export type IconMapProps = {
   endpoint?: string | null;
   endpointType?: string;
   assistantName?: string;
-  agentName?: string;
   avatar?: string;
   size?: number;
 };
 
 export type IconComponent = React.ComponentType<IconMapProps>;
-export type AgentIconComponent = React.ComponentType<AgentIconMapProps>;
-export type IconComponentTypes = IconComponent | AgentIconComponent;
 export type IconsRecord = {
-  [key in t.EModelEndpoint | 'unknown' | string]: IconComponentTypes | null | undefined;
+  [key in t.EModelEndpoint | 'unknown' | string]: IconComponent | null | undefined;
 };
-
-export type AgentIconMapProps = IconMapProps & { agentName?: string };
-
-
-
 export interface DataColumnMeta {
   meta:
     | {
@@ -176,46 +162,6 @@ export type AssistantPanelProps = {
   documentsMap: Map<string, t.AssistantDocument> | null;
   setAction: React.Dispatch<React.SetStateAction<t.Action | undefined>>;
   setCurrentAssistantId: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setActivePanel: React.Dispatch<React.SetStateAction<Panel>>;
-};
-
-export type AgentPanelProps = {
-  index?: number;
-  agent_id?: string;
-  activePanel?: string;
-  mcp?: t.MCP;
-  mcps?: t.MCP[];
-  action?: t.Action;
-  actions?: t.Action[];
-  createMutation: UseMutationResult<t.Agent, Error, t.AgentCreateParams>;
-  setActivePanel: React.Dispatch<React.SetStateAction<Panel>>;
-  setMcp: React.Dispatch<React.SetStateAction<t.MCP | undefined>>;
-  setAction: React.Dispatch<React.SetStateAction<t.Action | undefined>>;
-  setCurrentAgentId: React.Dispatch<React.SetStateAction<string | undefined>>;
-};
-
-export type AgentPanelContextType = {
-  action?: t.Action;
-  actions?: t.Action[];
-  setAction: React.Dispatch<React.SetStateAction<t.Action | undefined>>;
-  mcp?: t.MCP;
-  mcps?: t.MCP[];
-  setMcp: React.Dispatch<React.SetStateAction<t.MCP | undefined>>;
-  setMcps: React.Dispatch<React.SetStateAction<t.MCP[] | undefined>>;
-  tools: t.AgentToolType[];
-  activePanel?: string;
-  setActivePanel: React.Dispatch<React.SetStateAction<Panel>>;
-  setCurrentAgentId: React.Dispatch<React.SetStateAction<string | undefined>>;
-  groupedTools?: Record<string, t.AgentToolType & { tools?: t.AgentToolType[] }>;
-  agent_id?: string;
-  agentsConfig?: t.TAgentsEndpoint | null;
-  endpointsConfig?: t.TEndpointsConfig | null;
-};
-
-export type AgentModelPanelProps = {
-  agent_id?: string;
-  providers: Option[];
-  models: Record<string, string[] | undefined>;
   setActivePanel: React.Dispatch<React.SetStateAction<Panel>>;
 };
 
@@ -287,7 +233,6 @@ export type TSetOptionsPayload = {
   setExample: TSetExample;
   addExample: () => void;
   removeExample: () => void;
-  setAgentOption: TSetOption;
   // getConversation: () => t.TConversation | t.TPreset | null;
   checkPluginSelection: (value: string) => boolean;
   setTools: (newValue: string, remove?: boolean) => void;
@@ -459,7 +404,6 @@ export type IconProps = Pick<t.TMessage, 'isCreatedByUser' | 'model'> &
     endpoint?: t.EModelEndpoint | string | null;
     endpointType?: t.EModelEndpoint | null;
     assistantName?: string;
-    agentName?: string;
     error?: boolean;
   };
 

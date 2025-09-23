@@ -26,7 +26,7 @@ describe('MessageContainer', () => {
     expect(container).toHaveClass('flex', 'flex-col', 'gap-2', 'w-full');
   });
 
-  it('applies correct classes for agent messages', () => {
+  it('applies correct classes for assistant messages', () => {
     render(
       <MessageContainer
         {...defaultProps}
@@ -114,7 +114,7 @@ describe('MessageContainer', () => {
     expect(subRow).toHaveAttribute('aria-label', 'User message actions');
   });
 
-  it('has proper accessibility attributes for agent messages', () => {
+  it('has proper accessibility attributes for assistant messages', () => {
     render(
       <MessageContainer
         {...defaultProps}

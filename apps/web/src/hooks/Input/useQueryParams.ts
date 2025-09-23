@@ -2,13 +2,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  QueryKeys,
-  EModelEndpoint,
-  isAgentsEndpoint,
-  tQueryParamsSchema,
-  isAssistantsEndpoint,
-} from 'librechat-data-provider';
+import { QueryKeys, EModelEndpoint, tQueryParamsSchema, isAssistantsEndpoint } from 'librechat-data-provider';
 import type { TPreset, TEndpointsConfig, TStartupConfig } from 'librechat-data-provider';
 import type { ZodAny } from 'zod';
 import { getConvoSwitchLogic, getModelSpecIconURL, removeUnavailableTools, logger } from '~/utils';
@@ -37,7 +31,7 @@ const parseQueryValue = (value: string) => {
 /**
  * Processes and validates URL query parameters using schema definitions.
  * Extracts valid settings based on tQueryParamsSchema and handles special endpoint cases
- * for assistants and agents.
+ * for assistants.
  */
 const processValidSettings = (queryParams: Record<string, string>) => {
   const validSettings = {} as TPreset;
@@ -62,14 +56,6 @@ const processValidSettings = (queryParams: Record<string, string>) => {
   ) {
     validSettings.endpoint = EModelEndpoint.assistants;
   }
-  if (
-    validSettings.agent_id != null &&
-    validSettings.agent_id &&
-    !isAgentsEndpoint(validSettings.endpoint)
-  ) {
-    validSettings.endpoint = EModelEndpoint.agents;
-  }
-
   return validSettings;
 };
 

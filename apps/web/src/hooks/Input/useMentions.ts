@@ -84,7 +84,7 @@ export default function useMentions({
         )
         .filter(Boolean),
     }),
-    [listMap, assistantMap, endpointsConfig],
+    [listMap, endpointsConfig],
   );
 
   const modelSpecs = useMemo(() => startupConfig?.modelSpecs?.list ?? [], [startupConfig]);
@@ -173,7 +173,6 @@ export default function useMentions({
     assistantMap,
     modelsConfig,
     endpointsConfig,
-    assistantListMap,
     includeAssistants,
     interfaceConfig.presets,
     interfaceConfig.modelSelect,

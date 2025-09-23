@@ -10,12 +10,10 @@ type FileMapSetter = GenericSetter<Map<string, ExtendedFile>>;
 
 const useFileDeletion = ({
   mutateAsync,
-  agent_id,
   assistant_id,
   tool_resource,
 }: {
   mutateAsync: UseMutateAsyncFunction<t.DeleteFilesResponse, unknown, t.DeleteFilesBody, unknown>;
-  agent_id?: string;
   assistant_id?: string;
   tool_resource?: EToolResources;
 }) => {
@@ -25,17 +23,14 @@ const useFileDeletion = ({
   const executeBatchDelete = useCallback(
     ({
       filesToDelete,
-      agent_id,
       assistant_id,
       tool_resource,
     }: {
       filesToDelete: t.BatchFile[];
-      agent_id?: string;
       assistant_id?: string;
       tool_resource?: EToolResources;
     }) => {
       const payload = removeNullishValues({
-        agent_id,
         assistant_id,
         tool_resource,
       });
@@ -96,14 +91,13 @@ const useFileDeletion = ({
         const newBatch = [...prevBatch, file];
         debouncedDelete({
           filesToDelete: newBatch,
-          agent_id,
           assistant_id,
           tool_resource,
         });
         return newBatch;
       });
     },
-    [debouncedDelete, setFilesToDelete, agent_id, assistant_id, tool_resource],
+    [debouncedDelete, setFilesToDelete, assistant_id, tool_resource],
   );
 
   const deleteFiles = useCallback(
@@ -146,13 +140,12 @@ const useFileDeletion = ({
         const newBatch = [...prevBatch, ...batchFiles];
         debouncedDelete({
           filesToDelete: newBatch,
-          agent_id,
           assistant_id,
         });
         return newBatch;
       });
     },
-    [debouncedDelete, setFilesToDelete, agent_id, assistant_id],
+    [debouncedDelete, setFilesToDelete, assistant_id],
   );
 
   return { deleteFile, deleteFiles };

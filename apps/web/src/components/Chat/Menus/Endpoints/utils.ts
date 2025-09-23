@@ -1,12 +1,7 @@
 import React from 'react';
 import { Bot } from 'lucide-react';
-import { isAgentsEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
-import type {
-  TModelSpec,
-  TAgentsMap,
-  TAssistantsMap,
-  TEndpointsConfig,
-} from 'librechat-data-provider';
+import { isAssistantsEndpoint } from 'librechat-data-provider';
+import type { TModelSpec, TAssistantsMap, TEndpointsConfig } from 'librechat-data-provider';
 import type { useLocalize } from '~/hooks';
 import SpecIcon from '~/components/Chat/Menus/Endpoints/components/SpecIcon';
 import { Endpoint, SelectedValues } from '~/common';
@@ -18,10 +13,9 @@ export function filterItems<
     value?: string;
     models?: Array<{ name: string; isGlobal?: boolean }>;
   },
->(
+>( 
   items: T[],
   searchValue: string,
-  agentsMap: TAgentsMap | undefined,
   assistantsMap: TAssistantsMap | undefined,
 ): T[] | null {
   const searchTermLower = searchValue.trim().toLowerCase();
@@ -45,11 +39,6 @@ export function filterItems<
           return true;
         }
 
-        if (isAgentsEndpoint(item.value) && agentsMap && modelId.name in agentsMap) {
-          const agentName = agentsMap[modelId.name]?.name;
-          return typeof agentName === 'string' && agentName.toLowerCase().includes(searchTermLower);
-        }
-
         if (isAssistantsEndpoint(item.value) && assistantsMap) {
           const endpoint = item.value ?? '';
           const assistant = assistantsMap[endpoint][modelId.name];
@@ -71,7 +60,6 @@ export function filterModels(
   endpoint: Endpoint,
   models: string[],
   searchValue: string,
-  agentsMap: TAgentsMap | undefined,
   assistantsMap: TAssistantsMap | undefined,
 ): string[] {
   const searchTermLower = searchValue.trim().toLowerCase();
@@ -82,13 +70,7 @@ export function filterModels(
   return models.filter((modelId) => {
     let modelName = modelId;
 
-    if (isAgentsEndpoint(endpoint.value) && agentsMap && agentsMap[modelId]) {
-      modelName = agentsMap[modelId]?.name || modelId;
-    } else if (
-      isAssistantsEndpoint(endpoint.value) &&
-      assistantsMap &&
-      assistantsMap[endpoint.value]
-    ) {
+    if (isAssistantsEndpoint(endpoint.value) && assistantsMap && assistantsMap[endpoint.value]) {
       const assistant = assistantsMap[endpoint.value][modelId];
       modelName =
         typeof assistant.name === 'string' && assistant.name ? (assistant.name as string) : modelId;
@@ -182,14 +164,6 @@ export const getDisplayValue = ({
     const endpoint = mappedEndpoints.find((e) => e.value === selectedValues.endpoint);
     if (!endpoint) {
       return localize('com_ui_select_model');
-    }
-
-    if (
-      isAgentsEndpoint(endpoint.value) &&
-      endpoint.agentNames &&
-      endpoint.agentNames[selectedValues.model]
-    ) {
-      return endpoint.agentNames[selectedValues.model];
     }
 
     if (

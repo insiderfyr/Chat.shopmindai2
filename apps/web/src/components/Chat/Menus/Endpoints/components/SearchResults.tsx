@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { EarthIcon } from 'lucide-react';
-import { isAgentsEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
+import { isAssistantsEndpoint } from 'librechat-data-provider';
 import type { TModelSpec } from 'librechat-data-provider';
 import type { Endpoint } from '~/common';
 import { useModelSelectorContext } from '../ModelSelectorContext';
@@ -104,12 +104,6 @@ export function SearchResults({ results, localize, searchValue }: SearchResultsP
               : endpoint.models.filter((model) => {
                   let modelName = model.name;
                   if (
-                    isAgentsEndpoint(endpoint.value) &&
-                    endpoint.agentNames &&
-                    endpoint.agentNames[model.name]
-                  ) {
-                    modelName = endpoint.agentNames[model.name];
-                  } else if (
                     isAssistantsEndpoint(endpoint.value) &&
                     endpoint.assistantNames &&
                     endpoint.assistantNames[model.name]
@@ -136,17 +130,10 @@ export function SearchResults({ results, localize, searchValue }: SearchResultsP
                 {filteredModels.map((model) => {
                   const modelId = model.name;
 
-                  let isGlobal = false;
+                  const modelInfo = endpoint?.models?.find((m) => m.name === modelId);
+                  const isGlobal = modelInfo?.isGlobal ?? false;
                   let modelName = modelId;
                   if (
-                    isAgentsEndpoint(endpoint.value) &&
-                    endpoint.agentNames &&
-                    endpoint.agentNames[modelId]
-                  ) {
-                    modelName = endpoint.agentNames[modelId];
-                    const modelInfo = endpoint?.models?.find((m) => m.name === modelId);
-                    isGlobal = modelInfo?.isGlobal ?? false;
-                  } else if (
                     isAssistantsEndpoint(endpoint.value) &&
                     endpoint.assistantNames &&
                     endpoint.assistantNames[modelId]

@@ -56,7 +56,7 @@ const errorMessages = {
   [ErrorTypes.INVALID_AGENT_PROVIDER]: (json: TGenericError, localize: LocalizeFunction) => {
     const { info } = json;
     const provider = (alternateName[info] as string | undefined) ?? info;
-    return localize('com_error_invalid_agent_provider', { 0: provider });
+    return `${provider} is not supported.`;
   },
   [ErrorTypes.GOOGLE_ERROR]: (json: TGenericError) => {
     const { info } = json;

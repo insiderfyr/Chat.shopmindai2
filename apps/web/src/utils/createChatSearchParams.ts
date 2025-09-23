@@ -1,9 +1,4 @@
-import {
-  Constants,
-  isAgentsEndpoint,
-  tQueryParamsSchema,
-  isAssistantsEndpoint,
-} from 'librechat-data-provider';
+import { Constants, tQueryParamsSchema, isAssistantsEndpoint } from 'librechat-data-provider';
 import type { TConversation, TPreset } from 'librechat-data-provider';
 
 const allowedParams = Object.keys(tQueryParamsSchema.shape);
@@ -30,16 +25,8 @@ export default function createChatSearchParams(
   if (conversation.spec) {
     return new URLSearchParams({ spec: conversation.spec });
   }
-  if (
-    isAgentsEndpoint(endpoint) &&
-    conversation.agent_id &&
-    conversation.agent_id !== Constants.EPHEMERAL_AGENT_ID
-  ) {
-    return new URLSearchParams({ agent_id: String(conversation.agent_id) });
-  } else if (isAssistantsEndpoint(endpoint) && conversation.assistant_id) {
+  if (isAssistantsEndpoint(endpoint) && conversation.assistant_id) {
     return new URLSearchParams({ assistant_id: String(conversation.assistant_id) });
-  } else if (isAgentsEndpoint(endpoint) && !conversation.agent_id) {
-    return params;
   } else if (isAssistantsEndpoint(endpoint) && !conversation.assistant_id) {
     return params;
   }
@@ -53,9 +40,6 @@ export default function createChatSearchParams(
 
   const paramMap: Record<string, any> = {};
   allowedParams.forEach((key) => {
-    if (key === 'agent_id' && conversation.agent_id === Constants.EPHEMERAL_AGENT_ID) {
-      return;
-    }
     if (key !== 'endpoint' && key !== 'model') {
       paramMap[key] = (conversation as any)[key];
     }

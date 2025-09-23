@@ -31,7 +31,6 @@ export default function Landing({ centerFormOnLanding }: { centerFormOnLanding: 
     });
   }, [conversation?.endpoint, conversation?.iconURL, endpointsConfig]);
 
-  // Eliminat agentsMap și assistantMap
   const description = conversation?.greeting ?? '';
 
   return (

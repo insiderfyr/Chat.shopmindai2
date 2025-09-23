@@ -153,7 +153,6 @@ app.get('/api/user', (req, res) => {
 app.get('/api/endpoints', (req, res) => {
   res.json({
     data: {
-      agents: null,
       anthropic: null,
       assistants: null,
       azureAssistants: null,

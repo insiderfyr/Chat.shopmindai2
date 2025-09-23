@@ -2,7 +2,6 @@ import {
   QueryKeys,
   dataService,
   EModelEndpoint,
-  isAgentsEndpoint,
   defaultOrderQuery,
   defaultAssistantsVersion,
 } from 'librechat-data-provider';
@@ -196,7 +195,7 @@ export const useConversationTagsQuery = (
  * Hook for getting all available tools for Assistants
  */
 export const useAvailableToolsQuery = <TData = t.TPlugin[]>(
-  endpoint: t.AssistantsEndpoint | EModelEndpoint.agents,
+  endpoint: t.AssistantsEndpoint,
   config?: UseQueryOptions<t.TPlugin[], unknown, TData>,
 ): QueryObserverResult<TData> => {
   const queryClient = useQueryClient();
@@ -204,7 +203,7 @@ export const useAvailableToolsQuery = <TData = t.TPlugin[]>(
   const keyExpiry = queryClient.getQueryData<TCheckUserKeyResponse>([QueryKeys.name, endpoint]);
   const userProvidesKey = !!endpointsConfig?.[endpoint]?.userProvide;
   const keyProvided = userProvidesKey ? !!keyExpiry?.expiresAt : true;
-  const enabled = isAgentsEndpoint(endpoint) ? true : !!endpointsConfig?.[endpoint] && keyProvided;
+  const enabled = !!endpointsConfig?.[endpoint] && keyProvided;
   const version: string | number | undefined =
     endpointsConfig?.[endpoint]?.version ?? defaultAssistantsVersion[endpoint];
   return useQuery<t.TPlugin[], unknown, TData>(
@@ -325,7 +324,7 @@ export const useGetAssistantByIdQuery = (
  * Hook for retrieving user's saved Assistant Actions
  */
 export const useGetActionsQuery = <TData = Action[]>(
-  endpoint: t.AssistantsEndpoint | EModelEndpoint.agents,
+  endpoint: t.AssistantsEndpoint,
   config?: UseQueryOptions<Action[], unknown, TData>,
 ): QueryObserverResult<TData> => {
   const queryClient = useQueryClient();
@@ -333,8 +332,7 @@ export const useGetActionsQuery = <TData = Action[]>(
   const keyExpiry = queryClient.getQueryData<TCheckUserKeyResponse>([QueryKeys.name, endpoint]);
   const userProvidesKey = !!endpointsConfig?.[endpoint]?.userProvide;
   const keyProvided = userProvidesKey ? !!keyExpiry?.expiresAt : true;
-  const enabled =
-    (!!endpointsConfig?.[endpoint] && keyProvided) || endpoint === EModelEndpoint.agents;
+  const enabled = !!endpointsConfig?.[endpoint] && keyProvided;
 
   return useQuery<Action[], unknown, TData>([QueryKeys.actions], () => dataService.getActions(), {
     refetchOnWindowFocus: false,

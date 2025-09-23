@@ -1,5 +1,4 @@
 import { memo } from 'react';
-import LogoIcon from '~/components/svg/LogoIcon';
 import { EModelEndpoint, isAssistantsEndpoint, alternateName } from 'librechat-data-provider';
 import {
   Plugin,
@@ -65,7 +64,6 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
     size = 30,
     model = '',
     assistantName,
-    agentName,
   } = props;
 
   const assistantsIcon = {
@@ -97,40 +95,10 @@ const MessageEndpointIcon: React.FC<IconProps> = (props) => {
     name: endpoint,
   };
 
-  const agentsIcon = {
-    icon: iconURL ? (
-      <div className="relative flex h-6 w-6 items-center justify-center">
-        <div
-          title={agentName}
-          style={{
-            width: size,
-            height: size,
-          }}
-          className={cn('overflow-hidden rounded-full', props.className ?? '')}
-        >
-          <img
-            className="shadow-stroke h-full w-full object-cover"
-            src={iconURL}
-            alt={agentName}
-            style={{ height: '80', width: '80' }}
-          />
-        </div>
-      </div>
-    ) : (
-      <div className="h-6 w-6">
-        <div className="flex h-6 w-6 items-center justify-center overflow-hidden">
-          <LogoIcon className="h-2/3 w-2/3 text-gray-400" />
-        </div>
-      </div>
-    ),
-    name: endpoint,
-  };
-
   const endpointIcons: {
     [key: string]: EndpointIcon | undefined;
   } = {
     [EModelEndpoint.assistants]: assistantsIcon,
-    [EModelEndpoint.agents]: agentsIcon,
     [EModelEndpoint.azureAssistants]: assistantsIcon,
     [EModelEndpoint.azureOpenAI]: {
       icon: <AzureMinimalIcon size={size * 0.5555555555555556} />,

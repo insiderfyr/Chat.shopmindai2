@@ -1,24 +1,13 @@
-import { memo, useMemo } from 'react';
-import {
-  Constants,
-  supportsFiles,
-  mergeFileConfig,
-  isAgentsEndpoint,
-  isAssistantsEndpoint,
-  fileConfig as defaultFileConfig,
-} from 'librechat-data-provider';
+import { memo } from 'react';
+import { supportsFiles, mergeFileConfig, isAssistantsEndpoint, fileConfig as defaultFileConfig } from 'librechat-data-provider';
 import type { EndpointFileConfig } from 'librechat-data-provider';
 import { useGetFileConfig } from '~/data-provider';
-import AttachFileMenu from './AttachFileMenu';
 import { useChatContext } from '~/Providers';
 import AttachFile from './AttachFile';
 
 function AttachFileChat({ disableInputs }: { disableInputs: boolean }) {
   const { conversation } = useChatContext();
-  const conversationId = conversation?.conversationId ?? Constants.NEW_CONVO;
   const { endpoint, endpointType } = conversation ?? { endpoint: null };
-  const isAgents = useMemo(() => isAgentsEndpoint(endpoint), [endpoint]);
-  const isAssistants = useMemo(() => isAssistantsEndpoint(endpoint), [endpoint]);
 
   const { data: fileConfig = defaultFileConfig } = useGetFileConfig({
     select: (data) => mergeFileConfig(data),
@@ -27,19 +16,14 @@ function AttachFileChat({ disableInputs }: { disableInputs: boolean }) {
   const endpointFileConfig = fileConfig.endpoints[endpoint ?? ''] as EndpointFileConfig | undefined;
   const endpointSupportsFiles: boolean = supportsFiles[endpointType ?? endpoint ?? ''] ?? false;
   const isUploadDisabled = (disableInputs || endpointFileConfig?.disabled) ?? false;
+  const canUpload = endpointSupportsFiles && !isUploadDisabled;
 
-  if (isAssistants && endpointSupportsFiles && !isUploadDisabled) {
-    return <AttachFile disabled={disableInputs} />;
-  } else if (isAgents || (endpointSupportsFiles && !isUploadDisabled)) {
-    return (
-      <AttachFileMenu
-        disabled={disableInputs}
-        conversationId={conversationId}
-        endpointFileConfig={endpointFileConfig}
-      />
-    );
+  if (!canUpload) {
+    return null;
   }
-  return null;
+
+  const isAssistants = isAssistantsEndpoint(endpoint);
+  return <AttachFile disabled={disableInputs || !isAssistants} />;
 }
 
 export default memo(AttachFileChat);

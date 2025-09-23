@@ -1,16 +1,7 @@
 import { v4 } from 'uuid';
 import { cloneDeep } from 'lodash';
 import { useQueryClient } from '@tanstack/react-query';
-import {
-  Constants,
-  QueryKeys,
-  ContentTypes,
-  EModelEndpoint,
-  isAgentsEndpoint,
-  parseCompactConvo,
-  replaceSpecialVars,
-  isAssistantsEndpoint,
-} from 'librechat-data-provider';
+import { Constants, QueryKeys, ContentTypes, parseCompactConvo, replaceSpecialVars, isAssistantsEndpoint } from 'librechat-data-provider';
 import { useSetRecoilState, useResetRecoilState, useRecoilValue } from 'recoil';
 import type {
   TMessage,
@@ -24,7 +15,7 @@ import type { SetterOrUpdater } from 'recoil';
 import type { TAskFunction, ExtendedFile } from '~/common';
 import useSetFilesToDelete from '~/hooks/Files/useSetFilesToDelete';
 import useGetSender from '~/hooks/Conversations/useGetSender';
-import store, { useGetEphemeralAgent } from '~/store';
+import store from '~/store';
 import { getEndpointField, logger } from '~/utils';
 import useUserKey from '~/hooks/Input/useUserKey';
 import { useNavigate } from 'react-router-dom';
@@ -65,7 +56,6 @@ export default function useChatFunctions({
   const { user } = useAuthContext();
   const queryClient = useQueryClient();
   const setFilesToDelete = useSetFilesToDelete();
-  const getEphemeralAgent = useGetEphemeralAgent();
   const isTemporary = useRecoilValue(store.isTemporary);
   const { getExpiry } = useUserKey(immutableConversation?.endpoint ?? '');
   const setShowStopButton = useSetRecoilState(store.showStopButtonByIndex(index));
@@ -116,7 +106,6 @@ export default function useChatFunctions({
       return;
     }
 
-    const ephemeralAgent = getEphemeralAgent(conversationId ?? Constants.NEW_CONVO);
     const isEditOrContinue = isEdited || isContinued;
 
     let currentMessages: TMessage[] | null = overrideMessages ?? getMessages() ?? [];
@@ -186,13 +175,9 @@ export default function useChatFunctions({
       },
       convo,
     ) as TEndpointOption;
-    if (endpoint !== EModelEndpoint.agents) {
-      endpointOption.key = getExpiry();
-      endpointOption.thread_id = thread_id;
-      endpointOption.modelDisplayLabel = modelDisplayLabel;
-    } else {
-      endpointOption.key = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-    }
+    endpointOption.key = getExpiry();
+    endpointOption.thread_id = thread_id;
+    endpointOption.modelDisplayLabel = modelDisplayLabel;
     const responseSender = getSender({ model: conversation?.model, ...endpointOption });
 
     const currentMsg: TMessage = {
@@ -258,9 +243,7 @@ export default function useChatFunctions({
         },
       ];
     } else if (endpoint != null) {
-      initialResponse.model = isAgentsEndpoint(endpoint)
-        ? (conversation?.agent_id ?? '')
-        : (conversation?.model ?? '');
+      initialResponse.model = conversation?.model ?? '';
       initialResponse.text = '';
 
       if (editedContent && latestMessage?.content) {
@@ -310,7 +293,6 @@ export default function useChatFunctions({
       isResubmission,
       initialResponse,
       isTemporary,
-      ephemeralAgent,
       editedContent,
     };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { EarthIcon } from 'lucide-react';
-import { isAgentsEndpoint, isAssistantsEndpoint } from 'librechat-data-provider';
+import { isAssistantsEndpoint } from 'librechat-data-provider';
 import type { Endpoint } from '~/common';
 import { useModelSelectorContext } from '../ModelSelectorContext';
 import { CustomMenuItem as MenuItem } from '../CustomMenu';
@@ -13,17 +13,12 @@ interface EndpointModelItemProps {
 
 export function EndpointModelItem({ modelId, endpoint, isSelected }: EndpointModelItemProps) {
   const { handleSelectModel } = useModelSelectorContext();
-  let isGlobal = false;
+  const modelInfo = endpoint?.models?.find((m) => m.name === modelId);
+  const isGlobal = modelInfo?.isGlobal ?? false;
   let modelName = modelId;
   const avatarUrl = endpoint?.modelIcons?.[modelId ?? ''] || null;
 
-  // Use custom names if available
-  if (endpoint && modelId && isAgentsEndpoint(endpoint.value) && endpoint.agentNames?.[modelId]) {
-    modelName = endpoint.agentNames[modelId];
-
-    const modelInfo = endpoint?.models?.find((m) => m.name === modelId);
-    isGlobal = modelInfo?.isGlobal ?? false;
-  } else if (
+  if (
     endpoint &&
     modelId &&
     isAssistantsEndpoint(endpoint.value) &&
@@ -43,8 +38,7 @@ export function EndpointModelItem({ modelId, endpoint, isSelected }: EndpointMod
           <div className="flex h-5 w-5 items-center justify-center overflow-hidden rounded-full">
             <img src={avatarUrl} alt={modelName ?? ''} className="h-full w-full object-cover" />
           </div>
-        ) : (isAgentsEndpoint(endpoint.value) || isAssistantsEndpoint(endpoint.value)) &&
-          endpoint.icon ? (
+        ) : isAssistantsEndpoint(endpoint.value) && endpoint.icon ? (
           <div className="flex h-5 w-5 items-center justify-center overflow-hidden rounded-full">
             {endpoint.icon}
           </div>

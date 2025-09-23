@@ -464,41 +464,6 @@ app.get('/api/*', (req, res) => {
     method: req.method
   });
 });
-// ✅ Endpoint pentru agents/chat - CRITIC PENTRU CHATFORM
-app.post('/api/agents/chat/:agentId', (req, res) => {
-  const { message, conversationId, model, endpoint } = req.body;
-  const { agentId } = req.params;
-  
-  console.log(`Agent chat request - Agent: ${agentId}, Message: ${message}`);
-  
-  res.json({
-    message: `Mock response from agent ${agentId} to: ${message}`,
-    conversationId: conversationId || 'mock-agent-conversation-id',
-    messageId: 'mock-agent-message-id-' + Date.now(),
-    parentMessageId: null,
-    model: model || 'gpt-3.5-turbo',
-    endpoint: endpoint || 'openAI',
-    agentId: agentId
-  });
-});
-
-// ✅ Endpoint GET pentru a preveni erorile de preflight OPTIONS
-app.options('/api/agents/chat/:agentId', (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  res.status(200).end();
-});
-
-app.get('/api/agents/chat/:agentId', (req, res) => {
-  const { agentId } = req.params;
-  res.json({
-    message: `GET endpoint for agent ${agentId}`,
-    agentId: agentId,
-    status: 'active'
-  });
-});
-
 // Error handling
 app.use((err, req, res, next) => {
   console.error('Error:', err);

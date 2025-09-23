@@ -89,7 +89,6 @@ const ContentRender = memo(
       ask,
       edit,
       index,
-      agent,
       assistant,
       enterEdit,
       conversation,

@@ -116,21 +116,6 @@ const useSetIndexOptions: TUseSetOptions = (preset = false) => {
       : false;
   }
 
-  const setAgentOption: TSetOption = (param) => (newValue) => {
-    const editableConvo = JSON.stringify(conversation);
-    const convo = JSON.parse(editableConvo);
-    const { agentOptions } = convo;
-    agentOptions[param] = newValue;
-
-    setConversation(
-      (prevState) =>
-        tConvoUpdateSchema.parse({
-          ...prevState,
-          agentOptions,
-        }) as TConversation,
-    );
-  };
-
   const setTools: (newValue: string, remove?: boolean) => void = (newValue, remove) => {
     if (newValue === 'pluginStore') {
       setShowPluginStoreDialog(true);
@@ -170,7 +155,6 @@ const useSetIndexOptions: TUseSetOptions = (preset = false) => {
     setExample,
     addExample,
     removeExample,
-    setAgentOption,
     checkPluginSelection,
   };
 };

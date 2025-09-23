@@ -76,10 +76,9 @@ jest.mock('librechat-data-provider', () => ({
       // Add other schema shapes as needed
     },
   },
-  isAgentsEndpoint: jest.fn(() => false),
   isAssistantsEndpoint: jest.fn(() => false),
   QueryKeys: { startupConfig: 'startupConfig', endpoints: 'endpoints' },
-  EModelEndpoint: { custom: 'custom', assistants: 'assistants', agents: 'agents' },
+  EModelEndpoint: { custom: 'custom', assistants: 'assistants' },
 }));
 
 // Mock global window.history

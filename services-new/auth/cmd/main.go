@@ -140,7 +140,6 @@ func main() {
 				"azureOpenAI": nil,
 				"azureAssistants": nil,
 				"assistants": nil,
-				"agents": nil,
 				"chatGPTBrowser": nil,
 				"gptPlugins": nil,
 				"google": nil,

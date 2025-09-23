@@ -3,7 +3,6 @@ import {
   defaultEndpoints,
   modularEndpoints,
   LocalStorageKeys,
-  isAgentsEndpoint,
   isAssistantsEndpoint,
 } from 'librechat-data-provider';
 import type * as t from 'librechat-data-provider';
@@ -12,17 +11,14 @@ import type { LocalizeFunction, IconsRecord } from '~/common';
 export const getEntityName = ({
   name = '',
   localize,
-  isAgent,
 }: {
   name?: string;
-  isAgent?: boolean;
   localize: LocalizeFunction;
 }) => {
   if (name && name.length > 0) {
     return name;
-  } else {
-    return isAgent === true ? localize('com_ui_agent') : localize('com_ui_assistant');
   }
+  return localize('com_ui_assistant');
 };
 
 export const getEndpointsFilter = (endpointsConfig: t.TEndpointsConfig) => {
@@ -261,29 +257,20 @@ export function getIconKey({
 export const getEntity = ({
   endpoint,
   assistant_id,
-  agent_id,
-  agentsMap,
   assistantMap,
 }: {
   endpoint: EModelEndpoint | string | null | undefined;
   assistant_id: string | undefined;
-  agent_id: string | undefined;
-  agentsMap: t.TAgentsMap | undefined;
   assistantMap: t.TAssistantsMap | undefined;
 }): {
-  entity: t.Agent | t.Assistant | undefined | null;
-  isAgent: boolean;
+  entity: t.Assistant | undefined | null;
   isAssistant: boolean;
 } => {
-  const isAgent = isAgentsEndpoint(endpoint);
   const isAssistant = isAssistantsEndpoint(endpoint);
 
-  if (isAgent) {
-    const agent = agentsMap?.[agent_id ?? ''];
-    return { entity: agent, isAgent, isAssistant };
-  } else if (isAssistant) {
+  if (isAssistant) {
     const assistant = assistantMap?.[endpoint ?? '']?.[assistant_id ?? ''];
-    return { entity: assistant, isAgent, isAssistant };
+    return { entity: assistant, isAssistant };
   }
-  return { entity: null, isAgent, isAssistant };
+  return { entity: null, isAssistant };
 };

@@ -40,7 +40,6 @@ const MessageRender = memo(
       ask,
       edit,
       index,
-      agent,
       assistant,
       enterEdit,
       conversation,
@@ -158,8 +157,8 @@ const MessageRender = memo(
       isLast,
     ]);
 
-    // SubRow content for agent messages
-    const agentSubRowContent = useMemo(() => {
+    // SubRow content for assistant messages
+    const assistantSubRowContent = useMemo(() => {
       if (!shouldShowSubRow) return null;
 
       return (
@@ -236,7 +235,7 @@ const MessageRender = memo(
           hasActions={true}
           isCard={isCard}
           messageId={msg.messageId}
-          subRowContent={msg.isCreatedByUser ? userSubRowContent : agentSubRowContent}
+          subRowContent={msg.isCreatedByUser ? userSubRowContent : assistantSubRowContent}
         >
           <div className="flex flex-col gap-1">
             <div className="flex max-w-full flex-grow flex-col gap-0">

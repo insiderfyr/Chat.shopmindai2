@@ -147,7 +147,7 @@ describe('useFocusChatEffect', () => {
       Object.defineProperty(window, 'location', {
         value: {
           pathname: '/c/new',
-          search: '?agent_id=test_agent_id',
+          search: '?assistant_id=test_assistant_id',
         },
         writable: true,
       });
@@ -162,7 +162,7 @@ describe('useFocusChatEffect', () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(
         // Should use window.location.search, not location.search
-        '/c/new?agent_id=test_agent_id',
+        '/c/new?assistant_id=test_assistant_id',
         expect.objectContaining({
           replace: true,
           state: {},
@@ -171,10 +171,10 @@ describe('useFocusChatEffect', () => {
     });
 
     testUrlScenario({
-      windowLocationSearch: '?agent_id=agent123',
+      windowLocationSearch: '?assistant_id=agent123',
       reactRouterSearch: '?endpoint=openAI&model=gpt-4',
-      expectedUrl: '/c/new?agent_id=agent123',
-      testDescription: 'should prioritize window.location.search with agent_id parameter',
+      expectedUrl: '/c/new?assistant_id=agent123',
+      testDescription: 'should prioritize window.location.search with assistant_id parameter',
     });
 
     testUrlScenario({
@@ -185,40 +185,40 @@ describe('useFocusChatEffect', () => {
     });
 
     testUrlScenario({
-      windowLocationSearch: '?agent_id=agent123&prompt=test',
+      windowLocationSearch: '?assistant_id=agent123&prompt=test',
       reactRouterSearch: '',
-      expectedUrl: '/c/new?agent_id=agent123&prompt=test',
+      expectedUrl: '/c/new?assistant_id=agent123&prompt=test',
       testDescription: 'should use window.location.search when React Router search is empty',
     });
 
     testUrlScenario({
-      windowLocationSearch: '?agent_id=agent123',
-      reactRouterSearch: '?agent_id=differentAgent',
-      expectedUrl: '/c/new?agent_id=agent123',
+      windowLocationSearch: '?assistant_id=agent123',
+      reactRouterSearch: '?assistant_id=differentAgent',
+      expectedUrl: '/c/new?assistant_id=agent123',
       testDescription:
-        'should use window.location.search even when both have agent_id but with different values',
+        'should use window.location.search even when both have assistant_id but with different values',
     });
 
     testUrlScenario({
-      windowLocationSearch: '?agent_id=agent/with%20spaces&prompt=test%20query',
+      windowLocationSearch: '?assistant_id=agent/with%20spaces&prompt=test%20query',
       reactRouterSearch: '?endpoint=openAI',
-      expectedUrl: '/c/new?agent_id=agent/with%20spaces&prompt=test%20query',
+      expectedUrl: '/c/new?assistant_id=agent/with%20spaces&prompt=test%20query',
       testDescription: 'should handle URL parameters with special characters correctly',
     });
 
     testUrlScenario({
       windowLocationSearch:
-        '?agent_id=agent123&prompt=test&model=gpt-4&temperature=0.7&max_tokens=1000',
+        '?assistant_id=agent123&prompt=test&model=gpt-4&temperature=0.7&max_tokens=1000',
       reactRouterSearch: '?endpoint=openAI',
       expectedUrl:
-        '/c/new?agent_id=agent123&prompt=test&model=gpt-4&temperature=0.7&max_tokens=1000',
+        '/c/new?assistant_id=agent123&prompt=test&model=gpt-4&temperature=0.7&max_tokens=1000',
       testDescription: 'should handle multiple URL parameters correctly',
     });
 
     testUrlScenario({
-      windowLocationSearch: '?agent_id=agent123&broken=param=with=equals',
+      windowLocationSearch: '?assistant_id=agent123&broken=param=with=equals',
       reactRouterSearch: '?endpoint=openAI',
-      expectedUrl: '/c/new?agent_id=agent123&broken=param=with=equals',
+      expectedUrl: '/c/new?assistant_id=agent123&broken=param=with=equals',
       testDescription: 'should pass through malformed URL parameters unchanged',
     });
 
@@ -252,7 +252,7 @@ describe('useFocusChatEffect', () => {
       Object.defineProperty(window, 'location', {
         value: {
           pathname: '/c/new',
-          search: '?agent_id=agent123',
+          search: '?assistant_id=agent123',
         },
         writable: true,
       });
@@ -266,7 +266,7 @@ describe('useFocusChatEffect', () => {
       rerender();
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/c/new_changed?agent_id=agent123',
+        '/c/new_changed?assistant_id=agent123',
         expect.objectContaining({
           replace: true,
           state: {},
@@ -330,7 +330,7 @@ describe('useFocusChatEffect', () => {
       Object.defineProperty(window, 'location', {
         value: {
           pathname: '/c/new',
-          search: '?agent_id=agent123',
+          search: '?assistant_id=agent123',
         },
         writable: true,
       });
@@ -351,7 +351,7 @@ describe('useFocusChatEffect', () => {
       Object.defineProperty(window, 'location', {
         value: {
           pathname: '/c/new',
-          search: '?agent_id=agent123',
+          search: '?assistant_id=agent123',
         },
         writable: true,
       });

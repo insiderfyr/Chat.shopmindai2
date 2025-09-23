@@ -1,4 +1,3 @@
-import LogoIcon from '~/components/svg/LogoIcon';
 import { EModelEndpoint, alternateName } from 'librechat-data-provider';
 import {
   AzureMinimalIcon,
@@ -46,10 +45,6 @@ const MinimalIcon: React.FC<IconProps> = (props) => {
     [EModelEndpoint.chatGPTBrowser]: { icon: <LightningIcon />, name: 'ChatGPT' },
     [EModelEndpoint.assistants]: { icon: <Sparkles className="icon-sm" />, name: 'Assistant' },
     [EModelEndpoint.azureAssistants]: { icon: <Sparkles className="icon-sm" />, name: 'Assistant' },
-    [EModelEndpoint.agents]: {
-      icon: <LogoIcon className="icon-sm" />,
-      name: props.modelLabel ?? alternateName[EModelEndpoint.agents],
-    },
     [EModelEndpoint.bedrock]: {
       icon: <BedrockIcon className="icon-xl text-text-primary" />,
       name: props.modelLabel ?? alternateName[EModelEndpoint.bedrock],

@@ -5,7 +5,6 @@ import {
   QueryKeys,
   EModelEndpoint,
   mergeFileConfig,
-  isAgentsEndpoint,
   isAssistantsEndpoint,
   defaultAssistantsVersion,
   fileConfig as defaultFileConfig,
@@ -45,7 +44,6 @@ const useFileHandling = (params?: UseFileHandling) => {
   );
   const { resizeImageIfNeeded } = useClientResize();
 
-  const agent_id = params?.additionalMetadata?.agent_id ?? '';
   const assistant_id = params?.additionalMetadata?.assistant_id ?? '';
 
   const { data: fileConfig = null } = useGetFileConfig({
@@ -97,10 +95,6 @@ const useFileHandling = (params?: UseFileHandling) => {
       onSuccess: (data) => {
         clearUploadTimer(data.temp_file_id);
         console.log('upload success', data);
-        if (agent_id) {
-          queryClient.refetchQueries([QueryKeys.agent, agent_id]);
-          return;
-        }
         updateFileById(
           data.temp_file_id,
           {
@@ -173,19 +167,6 @@ const useFileHandling = (params?: UseFileHandling) => {
         if (value) {
           formData.append(key, value);
         }
-      }
-    }
-
-    if (isAgentsEndpoint(endpoint)) {
-      if (!agent_id) {
-        formData.append('message_file', 'true');
-      }
-      const tool_resource = extendedFile.tool_resource;
-      if (tool_resource != null) {
-        formData.append('tool_resource', tool_resource);
-      }
-      if (conversation?.agent_id != null && formData.get('agent_id') == null) {
-        formData.append('agent_id', conversation.agent_id);
       }
     }
 
@@ -372,14 +353,6 @@ const useFileHandling = (params?: UseFileHandling) => {
         } else {
           // File wasn't processed, proceed with original
           const isImage = originalFile.type.split('/')[0] === 'image';
-          const tool_resource =
-            initialExtendedFile.tool_resource ?? params?.additionalMetadata?.tool_resource;
-          if (isAgentsEndpoint(endpoint) && !isImage && tool_resource == null) {
-            /** Note: this needs to be removed when we can support files to providers */
-            setError('com_error_files_unsupported_capability');
-            continue;
-          }
-
           // Update progress to show ready for upload
           const readyExtendedFile = {
             ...initialExtendedFile,

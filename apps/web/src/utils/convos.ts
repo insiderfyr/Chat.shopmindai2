@@ -306,14 +306,14 @@ export function storeEndpointSettings(conversation: TConversation | null) {
   if (!conversation) {
     return;
   }
-  const { endpoint, model, agentOptions } = conversation;
+  const { endpoint, model } = conversation;
   if (!endpoint) {
     return;
   }
   const lastModel = JSON.parse(localStorage.getItem(LocalStorageKeys.LAST_MODEL) ?? '{}');
   lastModel[endpoint] = model;
   if (endpoint === EModelEndpoint.gptPlugins) {
-    lastModel.secondaryModel = agentOptions?.model ?? model ?? '';
+    lastModel.secondaryModel = model ?? '';
   }
   localStorage.setItem(LocalStorageKeys.LAST_MODEL, JSON.stringify(lastModel));
 }

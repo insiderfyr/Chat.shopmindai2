@@ -13,7 +13,6 @@ export default function FileRow({
   abortUpload,
   setFilesLoading,
   assistant_id,
-  agent_id,
   tool_resource,
   fileFilter,
   isRTL = false,
@@ -25,7 +24,6 @@ export default function FileRow({
   setFilesLoading: React.Dispatch<React.SetStateAction<boolean>>;
   fileFilter?: (file: ExtendedFile) => boolean;
   assistant_id?: string;
-  agent_id?: string;
   tool_resource?: EToolResources;
   isRTL?: boolean;
   Wrapper?: React.FC<{ children: React.ReactNode }>;
@@ -36,13 +34,7 @@ export default function FileRow({
 
   const { mutateAsync } = useDeleteFilesMutation({
     onMutate: async () =>
-      logger.log(
-        'agents',
-        'Deleting files: agent_id, assistant_id, tool_resource',
-        agent_id,
-        assistant_id,
-        tool_resource,
-      ),
+      logger.log('files', 'Deleting files: assistant_id, tool_resource', assistant_id, tool_resource),
     onSuccess: () => {
       console.log('Files deleted');
     },
@@ -51,7 +43,7 @@ export default function FileRow({
     },
   });
 
-  const { deleteFile } = useFileDeletion({ mutateAsync, agent_id, assistant_id, tool_resource });
+  const { deleteFile } = useFileDeletion({ mutateAsync, assistant_id, tool_resource });
 
   useEffect(() => {
     if (files.length === 0) {

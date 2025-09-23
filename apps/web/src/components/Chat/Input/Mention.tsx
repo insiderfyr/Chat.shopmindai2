@@ -5,6 +5,7 @@ import type { SetterOrUpdater } from 'recoil';
 import type { MentionOption, ConvoGenerator } from '~/common';
 import useSelectMention from '~/hooks/Input/useSelectMention';
 import useMentions from '~/hooks/Input/useMentions';
+import { useAssistantsMapContext } from '~/Providers/AssistantsMapContext';
 import { useLocalize, useCombobox, TranslationKeys } from '~/hooks';
 import { removeCharIfLast } from '~/utils';
 import MentionItem from './MentionItem';
@@ -32,7 +33,6 @@ export default function Mention({
     options,
     presets,
     modelSpecs,
-    agentsList,
     modelsConfig,
     endpointsConfig,
     assistantListMap,
@@ -71,12 +71,7 @@ export default function Mention({
       }
     };
 
-    if (mention.type === 'endpoint' && mention.value === EModelEndpoint.agents) {
-      setSearchValue('');
-      setInputOptions(agentsList ?? []);
-      setActiveIndex(0);
-      inputRef.current?.focus();
-    } else if (mention.type === 'endpoint' && mention.value === EModelEndpoint.assistants) {
+    if (mention.type === 'endpoint' && mention.value === EModelEndpoint.assistants) {
       setSearchValue('');
       setInputOptions(assistantListMap[EModelEndpoint.assistants] ?? []);
       setActiveIndex(0);

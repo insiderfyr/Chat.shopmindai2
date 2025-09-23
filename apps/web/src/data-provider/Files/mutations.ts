@@ -46,44 +46,12 @@ export const useUploadFileMutation = (
 
       const endpoint = formData.get('endpoint');
       const message_file = formData.get('message_file');
-      const agent_id = (formData.get('agent_id') as string | undefined) ?? '';
       const assistant_id = (formData.get('assistant_id') as string | undefined) ?? '';
       const tool_resource = (formData.get('tool_resource') as string | undefined) ?? '';
 
       if (message_file === 'true') {
         onSuccess?.(data, formData, context);
         return;
-      }
-
-      if (agent_id && tool_resource) {
-        queryClient.setQueryData<t.Agent>([QueryKeys.agent, agent_id], (agent) => {
-          if (!agent) {
-            return agent;
-          }
-
-          const update = {};
-          const prevResources = agent.tool_resources ?? {};
-          const prevResource: t.ExecuteCodeResource | t.AgentFileResource = agent.tool_resources?.[
-            tool_resource
-          ] ?? {
-            file_ids: [],
-          };
-          if (!prevResource.file_ids) {
-            prevResource.file_ids = [];
-          }
-          prevResource.file_ids.push(data.file_id);
-          update['tool_resources'] = {
-            ...prevResources,
-            [tool_resource]: prevResource,
-          };
-          if (!agent.tools?.includes(tool_resource)) {
-            update['tools'] = [...(agent.tools ?? []), tool_resource];
-          }
-          return {
-            ...agent,
-            ...update,
-          };
-        });
       }
 
       if (!assistant_id) {
@@ -161,9 +129,6 @@ export const useDeleteFilesMutation = (
         return (cachefiles ?? []).filter((file) => !fileMap.has(file.file_id));
       });
       onSuccess?.(data, vars, context);
-      if (vars.agent_id != null && vars.agent_id) {
-        queryClient.refetchQueries([QueryKeys.agent, vars.agent_id]);
-      }
     },
   });
 };

@@ -2,15 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { useCallback, useMemo } from 'react';
 import { useUpdateFeedbackMutation } from 'librechat-data-provider/react-query';
-import {
-  isAssistantsEndpoint,
-  isAgentsEndpoint,
-  TUpdateFeedbackRequest,
-  getTagByKey,
-  TFeedback,
-  toMinimalFeedback,
-  SearchResultData,
-} from 'librechat-data-provider';
+import { TUpdateFeedbackRequest, getTagByKey, TFeedback, toMinimalFeedback, SearchResultData } from 'librechat-data-provider';
 import type { TMessageProps } from '~/common';
 import {
   useChatContext,
@@ -71,7 +63,7 @@ export default function useMessageActions(props: TMessageActions) {
     [messageId, setCurrentEditId],
   );
 
-  // Eliminăm logica referitoare la assistantMap și agentsMap
+  // Eliminăm logica referitoare la assistantMap
   const isSubmitting = useMemo(
     () => (isMultiMessage === true ? isSubmittingAdditional : isSubmittingRoot),
     [isMultiMessage, isSubmittingAdditional, isSubmittingRoot],

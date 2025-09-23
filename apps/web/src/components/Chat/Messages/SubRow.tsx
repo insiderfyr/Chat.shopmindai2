@@ -13,14 +13,14 @@ type TSubRowProps = {
 const SUBROW_STYLES = {
   base: 'mt-1 flex gap-3 empty:hidden lg:flex text-xs',
   user: 'opacity-0 group-hover:opacity-100 transition-opacity duration-200 justify-end',
-  agent: 'justify-start',
+  assistant: 'justify-start',
 } as const;
 
 const SubRow = React.memo(({ children, classes = '', onClick, isCreatedByUser }: TSubRowProps) => {
   const containerClasses = useMemo(() => {
     return cn(
       SUBROW_STYLES.base,
-      isCreatedByUser ? SUBROW_STYLES.user : SUBROW_STYLES.agent,
+      isCreatedByUser ? SUBROW_STYLES.user : SUBROW_STYLES.assistant,
       classes,
     );
   }, [isCreatedByUser, classes]);

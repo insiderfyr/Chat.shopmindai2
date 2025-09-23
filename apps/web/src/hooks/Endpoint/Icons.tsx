@@ -1,6 +1,5 @@
 import { EModelEndpoint } from 'librechat-data-provider';
-import type { IconMapProps, AgentIconMapProps, IconsRecord } from '~/common';
-import LogoIcon from '~/components/svg/LogoIcon';
+import type { IconMapProps, IconsRecord } from '~/common';
 import {
   MinimalPlugin,
   GPTIcon,
@@ -33,27 +32,13 @@ const AssistantAvatar = ({
         height="80"
       />
     );
-  } else if (assistantName) {
+  }
+
+  if (assistantName) {
     return <AssistantIcon className={cn('text-token-secondary', className)} size={size} />;
   }
 
   return <Sparkles className={cn(context === 'landing' ? 'icon-2xl' : '', className)} />;
-};
-
-const LogoAvatar = ({ className = '', avatar = '', agentName, size }: AgentIconMapProps) => {
-  if (agentName != null && agentName && avatar) {
-    return (
-      <img
-        src={avatar}
-        className="bg-token-surface-secondary dark:bg-token-surface-tertiary h-full w-full rounded-full object-cover"
-        alt={agentName}
-        width="80"
-        height="80"
-      />
-    );
-  }
-
-  return <LogoIcon className={cn(agentName === '' ? 'icon-2xl' : '', className)} size={size} />;
 };
 
 const Bedrock = ({ className = '' }: IconMapProps) => {
@@ -70,7 +55,6 @@ export const icons: IconsRecord = {
   [EModelEndpoint.custom]: CustomMinimalIcon,
   [EModelEndpoint.assistants]: AssistantAvatar,
   [EModelEndpoint.azureAssistants]: AssistantAvatar,
-  [EModelEndpoint.agents]: LogoAvatar,
   [EModelEndpoint.bedrock]: Bedrock,
   unknown: UnknownIcon,
 };
