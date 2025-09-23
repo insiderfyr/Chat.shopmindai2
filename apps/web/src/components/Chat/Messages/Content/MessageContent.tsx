@@ -10,7 +10,6 @@ import { DelayedRender } from '~/components/ui';
 import type { TMessageContentProps, TDisplayProps } from '~/common';
 import type { TMessage } from 'librechat-data-provider';
 import EditMessage from './EditMessage';
-import CinematicTyping from './CinematicTyping';
 
 export const ErrorMessage = ({ message, text }: { message: TMessage; text: string }) => (
   <Container message={message}>
@@ -51,11 +50,8 @@ const DisplayMessage = ({ text, isCreatedByUser, message, showCursor }: TDisplay
 
   return (
     <Container message={message}>
-      <CinematicTyping
-        text={text}
-        isCreatedByUser={isCreatedByUser}
-        message={message}
-        showCursor={showCursor ?? false}
+      {/* Removed CinematicTyping, replaced with simple text display */}
+      <div
         className={cn(
           isSubmitting ? 'submitting' : '',
           showCursorState && !!text.length ? 'result-streaming' : '',
@@ -63,12 +59,17 @@ const DisplayMessage = ({ text, isCreatedByUser, message, showCursor }: TDisplay
           isCreatedByUser && !enableUserMsgMarkdown && 'whitespace-pre-wrap',
           isCreatedByUser ? 'dark:text-gray-20' : 'dark:text-gray-100',
         )}
-      />
+      >
+        {isCreatedByUser && enableUserMsgMarkdown ? (
+          <MarkdownLite content={text} />
+        ) : (
+          <Markdown content={text} isLatestMessage={isLatestMessage} />
+        )}
+      </div>
     </Container>
   );
 };
 
-// Unfinished Message Component
 export const UnfinishedMessage = ({ message }: { message: TMessage }) => (
   <Container message={message}>
     <div className="markdown prose dark:prose-invert light w-full break-words">
