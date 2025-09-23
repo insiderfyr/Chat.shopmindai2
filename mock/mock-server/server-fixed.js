@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 const app = express();
-const port = 4000;
+const port = 3080;
 
 // Middleware
 app.use(express.json());
@@ -11,6 +11,66 @@ app.use(cors());
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', service: 'mock-server' });
+});
+
+// Auth configuration endpoint (moved up before other routes)
+app.get('/api/auth/config', (req, res) => {
+  res.json({
+    data: {
+      keycloak: {
+        url: 'http://localhost:8081/auth',
+        realm: 'ShopMindAI',
+        clientId: 'auth-service',
+        authUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/auth',
+        tokenUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/token',
+        logoutUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/logout',
+      },
+      endpoints: {
+        login: '/api/v1/auth/login',
+        register: '/api/v1/auth/register',
+        refresh: '/api/v1/auth/refresh',
+        logout: '/api/v1/auth/logout',
+        profile: '/api/v1/user/profile',
+      },
+      features: {
+        registration: true,
+        passwordReset: true,
+        emailVerification: false,
+        socialLogin: false,
+      },
+      validation: {
+        username: {
+          minLength: 3,
+          maxLength: 30,
+          pattern: '^[a-zA-Z0-9_]+$',
+        },
+        password: {
+          minLength: 8,
+          maxLength: 128,
+          requirements: [
+            'At least one uppercase letter',
+            'At least one lowercase letter',
+            'At least one number',
+            'At least one special character',
+          ],
+        },
+        email: {
+          required: true,
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+        },
+      },
+    }
+  });
+});
+
+// Memories endpoint
+app.get('/api/memories', (req, res) => {
+  res.json({
+    memories: [
+      { id: 1, title: 'Mock Memory 1', content: 'This is a mock memory.' },
+      { id: 2, title: 'Mock Memory 2', content: 'This is another mock memory.' },
+    ]
+  });
 });
 
 // Auth v1 endpoints
@@ -47,7 +107,6 @@ app.post('/api/v1/auth/login', (req, res) => {
   }
 });
 
-// Register endpoint
 app.post('/api/v1/auth/register', (req, res) => {
   const { username, email, password, first_name, last_name } = req.body;
   
@@ -81,12 +140,10 @@ app.post('/api/v1/auth/register', (req, res) => {
   }
 });
 
-// Logout endpoint
 app.post('/api/v1/auth/logout', (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-// Token refresh endpoint
 app.post('/api/v1/auth/refresh', (req, res) => {
   const { refresh_token } = req.body;
   
@@ -110,38 +167,7 @@ app.post('/api/v1/auth/refresh', (req, res) => {
   }
 });
 
-// New mock endpoint for agents/chat/openAI
-app.post('/api/agents/chat/openAI', (req, res) => {
-  const { message } = req.body;
-
-  if (message) {
-    res.json({
-      message: "Chat response from OpenAI mock agent",
-      data: {
-        text: `Mock response to: ${message}`,
-        model: 'gpt-3.5-turbo',
-        timestamp: new Date().toISOString(),
-      }
-    });
-  } else {
-    res.status(400).json({
-      error: 'Invalid request',
-      message: 'Message is required',
-    });
-  }
-});
-
-// Simulate audio endpoint
-app.get('/api/audio/:audioId', (req, res) => {
-  const { audioId } = req.params;
-  // Return a mock audio response (You can replace this with actual audio file paths if needed)
-  res.json({
-    message: `Audio for ${audioId}`,
-    audioUrl: `/assets/audio/${audioId}.mp3`,
-  });
-});
-
-// Banner endpoint
+// Other required endpoints
 app.get('/api/banner', (req, res) => {
   res.json({
     data: {
@@ -152,7 +178,6 @@ app.get('/api/banner', (req, res) => {
   });
 });
 
-// Config endpoint
 app.get('/api/config', (req, res) => {
   res.json({
     data: {
@@ -175,7 +200,6 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-// Default user endpoint
 app.get('/api/user', (req, res) => {
   res.json({
     id: "mock-user-id",
@@ -185,37 +209,92 @@ app.get('/api/user', (req, res) => {
     last_name: "User"
   });
 });
-// Balance
-app.get('/api/balance', (req, res) => {
-  res.json({ credits: 1000, currency: 'USD' });
-});
 
-// Endpoints
 app.get('/api/endpoints', (req, res) => {
-  res.json([
-    { id: 'openai', name: 'OpenAI GPT-4', status: 'active' },
-    { id: 'mockai', name: 'Mock AI', status: 'active' }
-  ]);
+  res.json({
+    data: {
+      agents: null,
+      anthropic: null,
+      assistants: null,
+      azureAssistants: null,
+      azureOpenAI: null,
+      chatGPTBrowser: null,
+      custom: null,
+      google: null,
+      gptPlugins: null,
+      openAI: null,
+      xAI: null
+    },
+    message: "AI Endpoints - placeholder for ShopMindAI"
+  });
 });
 
-// Models
-app.get('/api/models', (req, res) => {
-  res.json([
-    { id: 'gpt-4', provider: 'openai', status: 'ready' },
-    { id: 'gpt-3.5', provider: 'openai', status: 'ready' }
-  ]);
+app.get('/api/startup', (req, res) => {
+  res.json({
+    data: {
+      app_name: "ShopMindAI",
+      version: "1.0.0-mvp",
+      features: {
+        plugins: true,
+        assistants: true,
+        files: true,
+        search: true
+      }
+    },
+    message: "Startup config - placeholder for ShopMindAI"
+  });
 });
 
-// Conversations
-app.get('/api/convos', (req, res) => {
-  res.json([
-    { id: 1, user: 'test', messages: ['Hello!', 'Hi, how can I help?'] },
-    { id: 2, user: 'demo', messages: ['Mock data works!', 'Yes it does!'] }
-  ]);
+app.get('/metrics', (req, res) => {
+  res.json({
+    data: {
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      timestamp: new Date().toISOString()
+    },
+    message: "Metrics endpoint - placeholder for ShopMindAI"
+  });
 });
 
+// Generic API routes
+app.get('/api/*', (req, res) => {
+  res.json({
+    message: "Generic API endpoint",
+    path: req.path,
+    method: req.method
+  });
+});
 
-// Start the server
+// Error handling
+app.use((err, req, res, next) => {
+  console.error('Error:', err);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+// 404 handler
+app.use('*', (req, res) => {
+  res.status(404).json({ error: 'Route not found', path: req.path });
+});
+
+// Start server
 app.listen(port, () => {
   console.log(`🚀 Mock server running on http://localhost:${port}`);
+  console.log('📝 Available endpoints:');
+  console.log('  GET  /health');
+  console.log('  POST /api/v1/auth/login');
+  console.log('  POST /api/v1/auth/register');
+  console.log('  POST /api/v1/auth/logout');
+  console.log('  POST /api/v1/auth/refresh');
+  console.log('  GET  /api/auth/config');
+  console.log('  GET  /api/memories');
+  console.log('  GET  /api/banner');
+  console.log('  GET  /api/config');
+  console.log('  GET  /api/user');
+  console.log('  GET  /api/endpoints');
+  console.log('  GET  /api/startup');
+  console.log('  GET  /metrics');
+  console.log('  GET  /api/* (generic)');
+  console.log('✅ Ready to serve!');
 });
+
+module.exports = app;
