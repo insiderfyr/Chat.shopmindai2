@@ -85,11 +85,6 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
         aria-label="Login form"
         method="POST"
         onSubmit={handleSubmit((data) => {
-          console.log("🔐 Login Form Submit - Data being sent:", data);
-          console.log("🔐 Login Form Submit - Email/Username:", data.email);
-          console.log("🔐 Login Form Submit - Password length:", data.password?.length);
-          console.log("🔐 Login Form Submit - Turnstile token:", turnstileToken);
-          console.log("🔐 Login Form Submit - Form errors:", errors);
           onSubmit(data);
         })}
       >

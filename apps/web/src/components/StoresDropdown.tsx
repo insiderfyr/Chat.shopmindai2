@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useLocalize } from '~/hooks';
 import { Dropdown } from './ui';
 import type { Option } from '~/common';
+import { cn } from '~/utils';
 
 // Lista de retaileri e-commerce
 const retailers = [
@@ -25,7 +26,6 @@ interface StoresDropdownProps {
 export default function StoresDropdown({ className, onStoreChange }: StoresDropdownProps) {
   const localize = useLocalize();
   const [selectedStore, setSelectedStore] = useState<string>(retailers[0].id);
-
   const handleStoreChange = (storeId: string) => {
     setSelectedStore(storeId);
     onStoreChange?.(storeId);
@@ -36,9 +36,9 @@ export default function StoresDropdown({ className, onStoreChange }: StoresDropd
     label: store.name,
   }));
 
-  const storeIcon = (
+  const renderStoreIcon = (size = 'h-5 w-5', className = '') => (
     <svg
-      className="h-5 w-5"
+      className={cn(size, className)}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
@@ -50,23 +50,34 @@ export default function StoresDropdown({ className, onStoreChange }: StoresDropd
     </svg>
   );
 
+  const triggerClasses = cn(
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-text-primary hover:text-accent-foreground rounded-md border border-border-light bg-surface-secondary p-2 hover:bg-surface-hover',
+    'px-3',
+    'dark:border-white/20 dark:bg-surface-secondary dark:text-white dark:hover:bg-surface-hover',
+  );
+
+  const containerClasses = cn('stores-dropdown relative', className);
+
   return (
     <Dropdown
       value={selectedStore}
       onChange={handleStoreChange}
       options={options}
-      className={className}
+      className={containerClasses}
+      triggerClassName={triggerClasses}
+      popoverClassName="bg-white/95 dark:bg-slate-900 border border-border-light dark:border-white/10 rounded-md shadow-lg"
       ariaLabel={localize('com_ui_select_store') || 'Select store'}
       testId="stores-dropdown"
-      renderValue={() => (
-        <div className="flex items-center gap-2">
-          {storeIcon}
-          <span className="font-medium">Stores</span>
+      renderValue={(option) => (
+        <div className="flex items-center gap-2 text-text-primary dark:text-white">
+          {renderStoreIcon('h-5 w-5', 'text-text-primary dark:text-white')}
+          <span className="truncate font-medium">{option.label}</span>
         </div>
       )}
       renderOption={(option) => (
         <div className="flex items-center gap-2">
-          <span className="truncate">{option.label}</span>
+          {renderStoreIcon('h-4 w-4', 'text-slate-500 dark:text-slate-200')}
+          <span className="truncate text-slate-700 dark:text-slate-100">{option.label}</span>
         </div>
       )}
     />

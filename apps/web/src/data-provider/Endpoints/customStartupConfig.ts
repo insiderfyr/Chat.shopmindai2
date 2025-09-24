@@ -1,8 +1,13 @@
 import axios from 'axios';
 
-// Custom auth service configuration
+const AUTH_SERVICE_URL =
+  (import.meta.env?.VITE_AUTH_SERVICE_URL as string | undefined) ??
+  (import.meta.env?.VITE_AUTH_SERVICE_BASE_URL as string | undefined) ??
+  (import.meta.env?.VITE_GATEWAY_URL as string | undefined) ??
+  'http://localhost:8088';
+
 const authService = axios.create({
-  baseURL: 'http://localhost:3080',
+  baseURL: AUTH_SERVICE_URL,
   timeout: 10000,
 });
 

@@ -19,55 +19,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', service: 'mock-server' });
 });
 
-// Auth configuration endpoint
-app.get('/api/auth/config', (req, res) => {
-  res.json({
-    data: {
-      keycloak: {
-        url: 'http://localhost:8081/auth',
-        realm: 'ShopMindAI',
-        clientId: 'auth-service',
-        authUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/auth',
-        tokenUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/token',
-        logoutUrl: 'http://localhost:8081/auth/realms/ShopMindAI/protocol/openid-connect/logout',
-      },
-      endpoints: {
-        login: '/api/v1/auth/login',
-        register: '/api/v1/auth/register',
-        refresh: '/api/v1/auth/refresh',
-        logout: '/api/v1/auth/logout',
-        profile: '/api/v1/user/profile',
-      },
-      features: {
-        registration: true,
-        passwordReset: true,
-        emailVerification: false,
-        socialLogin: false,
-      },
-      validation: {
-        username: {
-          minLength: 3,
-          maxLength: 30,
-          pattern: '^[a-zA-Z0-9_]+$',
-        },
-        password: {
-          minLength: 8,
-          maxLength: 128,
-          requirements: [
-            'At least one uppercase letter',
-            'At least one lowercase letter',
-            'At least one number',
-            'At least one special character',
-          ],
-        },
-        email: {
-          required: true,
-          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
-        },
-      },
-    }
-  });
-});
+
 
 // Memories endpoint
 app.get('/api/memories', (req, res) => {
@@ -79,99 +31,8 @@ app.get('/api/memories', (req, res) => {
   });
 });
 
-// Auth v1 endpoints
-app.post('/api/v1/auth/login', (req, res) => {
-  const { username, password } = req.body;
-  
-  if (username && password) {
-    res.json({
-      message: "Login successful",
-      data: {
-        access_token: 'mock-jwt-token-' + Date.now(),
-        refresh_token: 'mock-refresh-token-' + Date.now(),
-        token_type: 'Bearer',
-        expires_in: 300,
-        user: {
-          id: "mock-user-id",
-          username: username,
-          email: username.includes('@') ? username : `${username}@example.com`,
-          first_name: "Mock",
-          last_name: "User",
-          enabled: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      }
-    });
-  } else {
-    res.status(400).json({ 
-      error: "validation_error",
-      message: "Invalid request format",
-      code: 400,
-      details: "Username and password are required"
-    });
-  }
-});
 
-app.post('/api/v1/auth/register', (req, res) => {
-  const { username, email, password, first_name, last_name } = req.body;
-  
-  if (username && email && password && first_name && last_name) {
-    res.json({
-      message: "Registration successful",
-      data: {
-        access_token: 'mock-jwt-token-' + Date.now(),
-        refresh_token: 'mock-refresh-token-' + Date.now(),
-        token_type: 'Bearer',
-        expires_in: 300,
-        user: {
-          id: "mock-user-id",
-          username: username,
-          email: email,
-          first_name: first_name,
-          last_name: last_name,
-          enabled: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }
-      }
-    });
-  } else {
-    res.status(400).json({ 
-      error: "validation_error",
-      message: "Invalid request format",
-      code: 400,
-      details: "All fields are required"
-    });
-  }
-});
 
-app.post('/api/v1/auth/logout', (req, res) => {
-  res.json({ message: 'Logged out successfully' });
-});
-
-app.post('/api/v1/auth/refresh', (req, res) => {
-  const { refresh_token } = req.body;
-  
-  if (refresh_token) {
-    res.json({
-      message: "Token refreshed successfully",
-      data: {
-        access_token: 'new-mock-jwt-token-' + Date.now(),
-        refresh_token: 'new-mock-refresh-token-' + Date.now(),
-        token_type: 'Bearer',
-        expires_in: 300
-      }
-    });
-  } else {
-    res.status(400).json({ 
-      error: "validation_error",
-      message: "Invalid request format",
-      code: 400,
-      details: "Refresh token is required"
-    });
-  }
-});
 
 // Other required endpoints
 app.get('/api/banner', (req, res) => {
@@ -206,15 +67,6 @@ app.get('/api/config', (req, res) => {
   });
 });
 
-app.get('/api/user', (req, res) => {
-  res.json({
-    id: "mock-user-id",
-    username: "mockuser",
-    email: "mock@example.com",
-    first_name: "Mock",
-    last_name: "User"
-  });
-});
 
 app.get('/api/endpoints', (req, res) => {
   res.json({
@@ -434,17 +286,31 @@ app.get('/api/config/app', (req, res) => {
 });
 
 app.get('/api/convos/latest', (req, res) => {
-  res.json({ 
-    conversations: [], 
-    pageNumber: 1, 
-    pageSize: 50, 
-    pages: 1 
+  res.json({
+    conversations: [
+      {
+        conversationId: 'mock-convo-1',
+        title: 'Mock Conversation 1',
+        endpoint: 'openAI',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        conversationId: 'mock-convo-2',
+        title: 'Mock Conversation 2',
+        endpoint: 'openAI',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ],
+    pageNumber: 1,
+    pageSize: 50,
+    pages: 1
   });
 });
 
-app.post('/api/auth/verify', (req, res) => {
-  res.json({ valid: true, user: { username: 'mockuser' } });
-});
+
+
 
 app.get('/api/startup/config', (req, res) => {
   res.json({

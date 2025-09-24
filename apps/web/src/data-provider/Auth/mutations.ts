@@ -8,39 +8,16 @@ import { clearAllConversationStorage } from '~/utils';
 import store from '~/store';
 import axios from 'axios';
 
-// Custom auth service configuration
+const AUTH_SERVICE_URL =
+  (import.meta.env?.VITE_AUTH_SERVICE_URL as string | undefined) ??
+  (import.meta.env?.VITE_AUTH_SERVICE_BASE_URL as string | undefined) ??
+  (import.meta.env?.VITE_GATEWAY_URL as string | undefined) ??
+  'http://localhost:8088';
+
 const authService = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: AUTH_SERVICE_URL,
   timeout: 10000,
 });
-
-// Add request interceptor for better error handling
-authService.interceptors.request.use(
-  (config) => {
-    console.log(`🔄 Making request to: ${config.baseURL}${config.url}`);
-    console.log(`🔄 Request data:`, config.data);
-    return config;
-  },
-  (error) => {
-    console.error('❌ Request interceptor error:', error);
-    return Promise.reject(error);
-  }
-);
-
-// Add response interceptor for better error handling
-authService.interceptors.response.use(
-  (response) => {
-    console.log(`✅ Response from: ${response.config.url}`);
-    console.log(`✅ Response status: ${response.status}`);
-    return response;
-  },
-  (error) => {
-    console.error('❌ Response interceptor error:', error);
-    console.error('❌ Error response:', error.response?.data);
-    console.error('❌ Error status:', error.response?.status);
-    return Promise.reject(error);
-  }
-);
 
 // Custom login mutation that works with our auth service
 export const useLoginUserMutation = (
@@ -53,21 +30,13 @@ export const useLoginUserMutation = (
   
   return useMutation([MutationKeys.loginUser], {
     mutationFn: async (payload: t.TLoginUser) => {
-      console.log("🚀 Login API Request - Payload:", payload);
-      console.log("🚀 Login API Request - Sending to:", 'http://localhost:3080/api/v1/auth/login');
-      
       const requestData = {
         username: payload.email, // Our auth service expects username
         password: payload.password,
       };
-      
-      console.log("🚀 Login API Request - Request data:", requestData);
-      
+
       const response = await authService.post('/api/v1/auth/login', requestData);
-      
-      console.log("🚀 Login API Response - Status:", response.status);
-      console.log("🚀 Login API Response - Data:", response.data);
-      
+
       // Transform response to match expected format
       return {
         user: {
@@ -110,7 +79,9 @@ export const useLogoutUserMutation = (
   return useMutation([MutationKeys.logoutUser], {
     mutationFn: async () => {
       try {
-        await authService.post('/api/v1/auth/logout');
+        const refreshToken = localStorage.getItem('refreshToken');
+        const body = refreshToken ? { refresh_token: refreshToken } : undefined;
+        await authService.post('/api/v1/auth/logout', body);
       } catch (error) {
         // Logout should succeed even if the server request fails
         console.warn('Logout request failed:', error);
@@ -176,30 +147,17 @@ export const useRegisterUserMutation = (
   
   return useMutation([MutationKeys.registerUser], {
     mutationFn: async (payload: t.TRegisterUser) => {
-      console.log("📝 Registration API Request - Payload:", payload);
-      console.log("📝 Registration API Request - Sending to:", 'http://localhost:3080/api/v1/auth/register');
-      
       const requestData = {
         username: payload.email,
         email: payload.email,
         password: payload.password,
       };
-      
-      console.log("📝 Registration API Request - Request data:", requestData);
-      
+
       try {
         const response = await authService.post('/api/v1/auth/register', requestData);
-        
-        console.log("📝 Registration API Response - Status:", response.status);
-        console.log("📝 Registration API Response - Data:", response.data);
-        
+
         return response.data;
       } catch (error: any) {
-        console.error("📝 Registration API Error:", error);
-        console.error("📝 Registration API Error Response:", error.response?.data);
-        console.error("📝 Registration API Error Status:", error.response?.status);
-        console.error("📝 Registration API Error Message:", error.message);
-        
         // Re-throw the error with more details
         throw error;
       }

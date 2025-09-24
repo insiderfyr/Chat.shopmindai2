@@ -4,12 +4,14 @@ import type { LucideIcon } from 'lucide-react';
 import type { BadgeItem } from '~/common';
 import { useChatBadges, useLocalize } from '~/hooks';
 import { Button, Badge } from '~/components/ui';
+import { cn } from '~/utils';
 
 interface EditBadgesProps {
   isEditingChatBadges: boolean;
   handleCancelBadges: () => void;
   handleSaveBadges: () => void;
   setBadges: React.Dispatch<React.SetStateAction<Pick<BadgeItem, 'id'>[]>>;
+  isTemporary: boolean;
 }
 
 const EditBadgesComponent = ({
@@ -17,6 +19,7 @@ const EditBadgesComponent = ({
   handleCancelBadges,
   handleSaveBadges,
   setBadges,
+  isTemporary,
 }: EditBadgesProps) => {
   const localize = useLocalize();
   const allBadges = useChatBadges() || [];
@@ -34,7 +37,12 @@ const EditBadgesComponent = ({
   }
 
   return (
-    <div className="m-1.5 flex flex-col overflow-hidden rounded-b-lg rounded-t-2xl bg-surface-secondary-alt">
+    <div
+      className={cn(
+        'm-1.5 flex flex-col overflow-hidden rounded-b-lg rounded-t-2xl',
+        isTemporary ? 'bg-transparent dark:bg-transparent' : 'bg-surface-secondary-alt',
+      )}
+    >
       <div className="flex items-center gap-4 py-2 pl-3 pr-1.5 text-sm">
         <span className="mt-0 flex size-6 flex-shrink-0 items-center justify-center">
           <div className="icon-md">
