@@ -185,13 +185,15 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-1.5 m-0 w-full resize-none py-[4px] placeholder-black/50 bg-white dark:bg-slate-900 dark:placeholder-slate-300/80',
+        'md:py-1.5 m-0 w-full resize-none py-[4px] placeholder-black/50 dark:placeholder-slate-300/80',
+        isTemporary
+          ? 'bg-transparent dark:bg-transparent'
+          : 'bg-white dark:bg-slate-900',
         'text-sm md:text-base font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
         isCollapsed ? 'max-h-[36px]' : 'max-h-[26vh] md:max-h-[32vh]',
         isMoreThanThreeRows ? 'pl-4' : 'px-4',
-        
       ),
-    [isCollapsed, isMoreThanThreeRows],
+    [isCollapsed, isMoreThanThreeRows, isTemporary],
   );
 
   return (
@@ -199,17 +201,19 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
       onSubmit={methods.handleSubmit(submitMessage)}
       className={cn(
         // Responsive width and layout
-        'mx-auto flex flex-row gap-1.5 transition-all duration-300 ease-in-out sm:gap-2',
+        'mx-auto flex flex-row gap-1.5 transition-[margin] duration-300 ease-in-out sm:gap-2',
         // Mobile-first responsive design - slightly wider
         'w-full px-2 sm:w-[94%] sm:px-3 md:w-[92%] md:px-4 lg:w-[90%]',
         // Responsive max-width - slightly wider for better UX
         'xl:max-w-none 2xl:max-w-none max-w-none sm:max-w-none md:max-w-none lg:max-w-none',
+        // Subtle global shadow to lift the entire form container off the page
+        'shadow-[0_10px_26px_-20px_rgba(15,23,42,0.28)] dark:shadow-[0_14px_30px_-22px_rgba(2,6,23,0.65)]',
         // Responsive margins - moved up more
         centerFormOnLanding &&
           (conversationId == null || conversationId === Constants.NEW_CONVO) &&
           !isSubmitting &&
           conversation?.messages?.length === 0
-          ? '-mb-8 transition-all duration-200 sm:-mb-7 md:-mb-6 lg:-mb-5'
+          ? '-mb-8 transition-[margin] duration-200 sm:-mb-7 md:-mb-6 lg:-mb-5'
           : '-mb-8 sm:-mb-7 md:-mb-6 lg:-mb-5',
       )}
     >
@@ -236,7 +240,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border-[1.5px] pb-1 text-text-primary transition-all duration-200 sm:rounded-[1.75rem] sm:pb-1',
+              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border-[1.5px] pb-1 text-text-primary transition-shadow duration-200 sm:rounded-[1.75rem] sm:pb-1',
               // Elevated, layered shadows above and below for better separation from background
               'shadow-[0_14px_32px_-18px_rgba(15,23,42,0.18),0_-10px_20px_-18px_rgba(15,23,42,0.12)]',
               'dark:shadow-[0_22px_50px_-24px_rgba(2,6,23,0.7),0_-14px_32px_-24px_rgba(2,6,23,0.45),inset_0_1px_4px_rgba(59,130,246,0.08)]',
@@ -245,12 +249,17 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                 : 'border-[rgba(61,122,255,0.7)] bg-white dark:border-[rgba(113,153,255,0.78)] dark:bg-slate-900',
             )}
           >
-            <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
+            <TextareaHeader
+              addedConvo={addedConvo}
+              setAddedConvo={setAddedConvo}
+              isTemporary={isTemporary}
+            />
             <EditBadges
               isEditingChatBadges={isEditingBadges}
               handleCancelBadges={handleCancelBadges}
               handleSaveBadges={handleSaveBadges}
               setBadges={setBadges}
+              isTemporary={isTemporary}
             />
             <FileFormChat disableInputs={disableInputs} />
             {endpoint && (
@@ -301,7 +310,10 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
             {/* BadgeRow rămâne în poziția actuală */}
             <div
               className={cn(
-                'items-between flex gap-2 bg-white pb-1.5 dark:bg-slate-900',
+                'items-between flex gap-2 pb-1.5',
+                isTemporary
+                  ? 'bg-transparent dark:bg-transparent'
+                  : 'bg-white dark:bg-slate-900',
                 isRTL ? 'flex-row-reverse' : 'flex-row',
               )}
             >
