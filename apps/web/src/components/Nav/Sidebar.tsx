@@ -121,9 +121,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className, activeItem = 'home', onIte
           onClick={item.onClick}
           className={cn(
             'group relative flex h-12 w-full items-center justify-center rounded-xl transition-all duration-200 ease-in-out',
-            'hover:bg-gray-300/80 dark:hover:bg-gray-800/80',
+            'hover:bg-gray-300/80 dark:hover:bg-slate-800',
             'focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-offset-2',
-            item.isActive && 'bg-blue-50 dark:bg-blue-900/20',
+            item.isActive && 'bg-blue-50 dark:bg-slate-800',
             item.id === 'logo' && 'mb-6 h-16',
           )}
           style={{
@@ -142,9 +142,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className, activeItem = 'home', onIte
               className={cn(
                 'transition-all duration-200',
                 item.isActive
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-gray-600 dark:text-gray-400',
-                item.id === 'logo' && 'text-blue-500 dark:text-blue-400',
+                  ? 'text-blue-600 dark:text-white'
+                  : 'text-gray-600 dark:text-slate-300',
+                item.id === 'logo' && 'text-blue-500 dark:text-white',
               )}
             />
 
@@ -153,9 +153,9 @@ const Sidebar: React.FC<SidebarProps> = ({ className, activeItem = 'home', onIte
                 className={cn(
                   'text-sm font-medium transition-all duration-200',
                   item.isActive
-                    ? 'text-blue-700 dark:text-blue-300'
-                    : 'text-gray-700 dark:text-gray-300',
-                  item.id === 'logo' && 'text-lg font-bold text-blue-600 dark:text-blue-400',
+                    ? 'text-blue-700 dark:text-white'
+                    : 'text-gray-700 dark:text-slate-200',
+                  item.id === 'logo' && 'text-lg font-bold text-blue-600 dark:text-white',
                 )}
               >
                 {item.label}
@@ -177,7 +177,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className, activeItem = 'home', onIte
   return (
     <div
       className={cn(
-        'fixed left-0 top-0 h-full border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900',
+        'fixed left-0 top-0 h-full border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-slate-900',
         'z-40 transition-all duration-300 ease-in-out',
         isExpanded ? 'w-64' : 'w-20',
         className,

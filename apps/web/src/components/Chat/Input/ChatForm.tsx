@@ -185,9 +185,9 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
   const baseClasses = useMemo(
     () =>
       cn(
-        'md:py-1.5 m-0 w-full resize-none py-[4px] placeholder-black/50 bg-white dark:bg-gray-800 dark:placeholder-white/50',
+        'md:py-1.5 m-0 w-full resize-none py-[4px] placeholder-black/50 bg-white dark:bg-slate-900 dark:placeholder-slate-300/80',
         'text-sm md:text-base font-light leading-relaxed font-["DM Sans"]', // DM Sans for e-commerce
-        isCollapsed ? 'max-h-[40px]' : 'max-h-[30vh] md:max-h-[35vh]',
+        isCollapsed ? 'max-h-[36px]' : 'max-h-[26vh] md:max-h-[32vh]',
         isMoreThanThreeRows ? 'pl-4' : 'px-4',
         
       ),
@@ -236,13 +236,14 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-1 text-text-primary ring-1 ring-black/5 dark:ring-white/10 transition-all duration-200 sm:rounded-[1.75rem] sm:pb-1',
-              // Subtle blue-tinted inner + outer shadow
-              'shadow-[inset_0_1px_4px_rgba(59,130,246,0.15),0_6px_16px_-10px_rgba(59,130,246,0.22)]',
-              'dark:shadow-[inset_0_1px_4px_rgba(59,130,246,0.12),0_6px_16px_-10px_rgba(59,130,246,0.18)]',
+              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-1 text-text-primary transition-all duration-200 sm:rounded-[1.75rem] sm:pb-1',
+              // Elevated, layered shadows for better separation from background
+              'ring-1 ring-black/8 dark:ring-white/10',
+              'shadow-[0_18px_38px_-20px_rgba(15,23,42,0.32),0_10px_24px_-16px_rgba(59,130,246,0.2),inset_0_1px_4px_rgba(59,130,246,0.12)]',
+              'dark:shadow-[0_22px_50px_-24px_rgba(2,6,23,0.7),0_12px_28px_-18px_rgba(59,130,246,0.18),inset_0_1px_4px_rgba(59,130,246,0.08)]',
               isTemporary
-                ? 'border-violet-800/60 bg-violet-950/10'
-                : 'border-border-light bg-white dark:bg-gray-800',
+                ? 'border-violet-800/60 bg-violet-50/90 dark:bg-violet-950/40'
+                : 'border-border-light bg-white dark:border-slate-800/80 dark:bg-slate-900',
             )}
           >
             <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
@@ -286,7 +287,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
                     'placeholder:duration-800 placeholder:ease-[cubic-bezier(0.4,0,0.2,1)] placeholder:transition-all',
                     'dynamic-placeholder dynamic-placeholder-transition',
                     // Responsive textarea styling - reduced height
-                    'max-h-[100px] min-h-[36px] w-full text-base sm:max-h-[140px] mt-2',
+                    'max-h-[88px] min-h-[36px] w-full text-base sm:max-h-[120px] mt-2',
                   )}
                 />
                 <div className="flex flex-col items-start justify-start pt-1.5">
@@ -301,7 +302,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
             {/* BadgeRow rămâne în poziția actuală */}
             <div
               className={cn(
-                'items-between flex gap-2 bg-white pb-1.5 dark:bg-gray-800',
+                'items-between flex gap-2 bg-white pb-1.5 dark:bg-slate-900',
                 isRTL ? 'flex-row-reverse' : 'flex-row',
               )}
             >

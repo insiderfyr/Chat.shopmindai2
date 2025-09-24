@@ -9,6 +9,8 @@ interface DropdownProps {
   onChange: (value: string) => void;
   options: (string | Option | { divider: true })[];
   className?: string;
+  triggerClassName?: string;
+  popoverClassName?: string;
   sizeClasses?: string;
   testId?: string;
   icon?: React.ReactNode;
@@ -30,6 +32,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   onChange,
   options,
   className = '',
+  triggerClassName,
+  popoverClassName,
   sizeClasses,
   testId = 'dropdown-menu',
   icon,
@@ -72,7 +76,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         className={cn(
           'focus:ring-offset-ring-offset relative inline-flex items-center justify-between rounded-2xl border border-input bg-background px-3 py-2 text-sm text-text-primary transition-all duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground focus:ring-ring-primary',
           iconOnly ? 'h-full w-10' : 'w-fit gap-2',
-          className,
+          triggerClassName ?? className,
         )}
         data-testid={testId}
         aria-label={ariaLabel}
@@ -97,7 +101,11 @@ const Dropdown: React.FC<DropdownProps> = ({
       <Select.SelectPopover
         portal={portal}
         store={selectProps}
-        className={cn('popover-ui', sizeClasses, className, 'max-h-[80vh] overflow-y-auto')}
+        className={cn(
+          'popover-ui max-h-[80vh] overflow-y-auto',
+          sizeClasses,
+          popoverClassName ?? className,
+        )}
       >
         {options.map((item, index) => {
           if (isDivider(item)) {
