@@ -429,9 +429,12 @@ export type TAuthContext = {
   user: t.TUser | undefined;
   token: string | undefined;
   isAuthenticated: boolean;
+  isInitializing: boolean;
   error: string | undefined;
   login: (data: t.TLoginUser) => void;
   logout: (redirect?: string) => void;
+  refreshSession: (refreshToken?: string) => Promise<boolean>;
+  loadUser: () => Promise<t.TUser | undefined>;
   setError: React.Dispatch<React.SetStateAction<string | undefined>>;
   roles?: Record<string, t.TRole | null | undefined>;
 };

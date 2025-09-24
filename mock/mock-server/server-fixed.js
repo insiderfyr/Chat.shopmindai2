@@ -286,13 +286,29 @@ app.get('/api/config/app', (req, res) => {
 });
 
 app.get('/api/convos/latest', (req, res) => {
-  res.json({ 
-    conversations: [], 
-    pageNumber: 1, 
-    pageSize: 50, 
-    pages: 1 
+  res.json({
+    conversations: [
+      {
+        conversationId: 'mock-convo-1',
+        title: 'Mock Conversation 1',
+        endpoint: 'openAI',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        conversationId: 'mock-convo-2',
+        title: 'Mock Conversation 2',
+        endpoint: 'openAI',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    ],
+    pageNumber: 1,
+    pageSize: 50,
+    pages: 1
   });
 });
+
 
 
 

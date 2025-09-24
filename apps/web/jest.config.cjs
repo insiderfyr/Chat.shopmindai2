@@ -2,7 +2,7 @@ module.exports = {
   roots: ['<rootDir>/src'],
   testEnvironment: 'jsdom',
   testEnvironmentOptions: {
-    url: 'http://localhost:3080',
+    url: 'http://localhost:8000',
   },
   collectCoverage: true,
   collectCoverageFrom: [

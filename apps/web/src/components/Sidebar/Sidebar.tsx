@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   return (
     <div
       className={cn(
-        'fixed left-0 top-0 z-50 h-full w-18 border-r border-gray-200/50 bg-white/80 backdrop-blur-sm',
+        'fixed left-0 top-0 z-50 h-full w-20 border-r border-gray-200/50 bg-white/80 backdrop-blur-sm',
         'flex flex-col items-center gap-6 py-4',
         className,
       )}
@@ -77,5 +77,6 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
     </div>
   );
 };
+
 
 export default Sidebar;

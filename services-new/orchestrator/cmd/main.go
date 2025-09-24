@@ -28,7 +28,11 @@ func main() {
 		Str("env", cfg.Env).
 		Msg("starting orchestrator")
 
-	srv := httpserver.New(cfg)
+	srv, err := httpserver.New(cfg)
+	if err != nil {
+		log.Fatal().Err(err).Msg("failed to initialise http server")
+	}
+	defer srv.Close()
 
 	server := &http.Server{
 		Addr:              ":" + cfg.Port,
