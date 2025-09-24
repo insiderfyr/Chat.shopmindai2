@@ -28,7 +28,7 @@ The project is a microservices-based application with a React frontend and Go ba
 ### Integration Changes
 - Updated Kong configuration to route /api to orchestrator, /api/auth to auth, /llm to llm-proxy, /chat to chat-service.
 - Enabled OpenID (Keycloak) in auth config for OAuth login in frontend.
-- Updated Vite proxy to point to Kong (localhost:8000) for all API calls.
+- Updated Vite proxy to point to Kong (localhost:8088) for all API calls.
 
 ## How to Run and Connect
 1. **Start Gateway**: `cd infra/gateway && docker-compose up -d`
@@ -38,4 +38,3 @@ The project is a microservices-based application with a React frontend and Go ba
 5. Frontend now connects to microservices via Kong gateway.
 
 For testing, ensure all containers are running and check logs for connections.
-

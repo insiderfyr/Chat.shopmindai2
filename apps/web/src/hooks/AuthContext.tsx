@@ -25,7 +25,7 @@ const AUTH_SERVICE_URL =
   (import.meta.env?.VITE_AUTH_SERVICE_URL as string | undefined) ??
   (import.meta.env?.VITE_AUTH_SERVICE_BASE_URL as string | undefined) ??
   (import.meta.env?.VITE_GATEWAY_URL as string | undefined) ??
-  'http://localhost:8000';
+  'http://localhost:8088';
 
 const REFRESH_TOKEN_STORAGE_KEY = 'refreshToken';
 const AUTH_PROVIDER_NAME = 'auth-service';

@@ -12,7 +12,7 @@ const AUTH_SERVICE_URL =
   (import.meta.env?.VITE_AUTH_SERVICE_URL as string | undefined) ??
   (import.meta.env?.VITE_AUTH_SERVICE_BASE_URL as string | undefined) ??
   (import.meta.env?.VITE_GATEWAY_URL as string | undefined) ??
-  'http://localhost:8000';
+  'http://localhost:8088';
 
 const authService = axios.create({
   baseURL: AUTH_SERVICE_URL,
