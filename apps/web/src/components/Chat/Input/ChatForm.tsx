@@ -201,7 +201,7 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
         // Responsive width and layout
         'mx-auto flex flex-row gap-1.5 transition-all duration-300 ease-in-out sm:gap-2',
         // Mobile-first responsive design - slightly wider
-        'sm:w-12/12 md:w-12/12 lg:w-12/12 w-full px-2 sm:px-3 md:px-4',
+        'w-full px-2 sm:w-[94%] sm:px-3 md:w-[92%] md:px-4 lg:w-[90%]',
         // Responsive max-width - slightly wider for better UX
         'xl:max-w-none 2xl:max-w-none max-w-none sm:max-w-none md:max-w-none lg:max-w-none',
         // Responsive margins - moved up more
@@ -236,14 +236,13 @@ const ChatForm = memo(({ index = 0 }: { index?: number }) => {
           <div
             onClick={handleContainerClick}
             className={cn(
-              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border pb-1 text-text-primary transition-all duration-200 sm:rounded-[1.75rem] sm:pb-1',
-              // Elevated, layered shadows for better separation from background
-              'ring-1 ring-black/8 dark:ring-white/10',
-              'shadow-[0_18px_38px_-20px_rgba(15,23,42,0.32),0_10px_24px_-16px_rgba(59,130,246,0.2),inset_0_1px_4px_rgba(59,130,246,0.12)]',
-              'dark:shadow-[0_22px_50px_-24px_rgba(2,6,23,0.7),0_12px_28px_-18px_rgba(59,130,246,0.18),inset_0_1px_4px_rgba(59,130,246,0.08)]',
+              'relative mt-2 flex w-full min-w-full flex-grow flex-col overflow-hidden rounded-t-[1.5rem] border-[1.5px] pb-1 text-text-primary transition-all duration-200 sm:rounded-[1.75rem] sm:pb-1',
+              // Elevated, layered shadows above and below for better separation from background
+              'shadow-[0_14px_32px_-18px_rgba(15,23,42,0.18),0_-10px_20px_-18px_rgba(15,23,42,0.12)]',
+              'dark:shadow-[0_22px_50px_-24px_rgba(2,6,23,0.7),0_-14px_32px_-24px_rgba(2,6,23,0.45),inset_0_1px_4px_rgba(59,130,246,0.08)]',
               isTemporary
-                ? 'border-violet-800/60 bg-violet-50/90 dark:bg-violet-950/40'
-                : 'border-border-light bg-white dark:border-slate-800/80 dark:bg-slate-900',
+                ? 'border-[rgba(61,122,255,0.62)] bg-violet-50/90 dark:border-[rgba(113,153,255,0.72)] dark:bg-violet-950/40'
+                : 'border-[rgba(61,122,255,0.7)] bg-white dark:border-[rgba(113,153,255,0.78)] dark:bg-slate-900',
             )}
           >
             <TextareaHeader addedConvo={addedConvo} setAddedConvo={setAddedConvo} />
