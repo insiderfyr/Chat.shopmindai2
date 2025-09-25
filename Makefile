@@ -1,15 +1,15 @@
 .PHONY: up down logs ps tree status
 
 up:
-	docker compose -f services/auth/docker-compose.yml up -d || true
+	docker compose -f services-new/auth/docker-compose.yml up -d || true
 	docker compose -f infra/gateway/docker-compose.yml up -d || true
 
 down:
 	docker compose -f infra/gateway/docker-compose.yml down || true
-	docker compose -f services/auth/docker-compose.yml down || true
+	docker compose -f services-new/auth/docker-compose.yml down || true
 
 logs:
-	docker compose -f services/auth/docker-compose.yml logs -f --tail 100 | cat
+	docker compose -f services-new/auth/docker-compose.yml logs -f --tail 100 | cat
 
 ps:
 	docker ps | cat
