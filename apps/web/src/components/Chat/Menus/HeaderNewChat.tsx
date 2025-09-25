@@ -36,7 +36,7 @@ export default function HeaderNewChat() {
           className="rounded-md border border-border-light bg-surface-secondary p-2 hover:bg-surface-hover max-md:hidden"
           onClick={clickHandler}
         >
-          <NewChatIcon />
+          <NewChatIcon className="h-5 w-5" />
         </Button>
       }
     />

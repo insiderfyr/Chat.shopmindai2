@@ -53,7 +53,11 @@ export function TemporaryChat() {
           >
             {temporaryBadge.icon && (
               <temporaryBadge.icon
-                className={cn('relative h-5 w-5 md:h-4 md:w-4', !temporaryBadge.label && 'mx-auto')}
+                strokeWidth={1.75}
+                className={cn(
+                  'relative h-5 w-5 text-text-primary dark:text-white md:h-4 md:w-4',
+                  !temporaryBadge.label && 'mx-auto',
+                )}
               />
             )}
           </button>
